@@ -1,0 +1,39 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://dx75bjfr4ru25"
+path="res://.godot/imported/vertex_animation_textures1_mesh.fbx-dd2c5d97ba4ffd06b8d4980de3bfcbdc.scn"
+
+[deps]
+
+source_file="res://rigidVatTest/geo/vertex_animation_textures1_mesh.fbx"
+dest_files=["res://.godot/imported/vertex_animation_textures1_mesh.fbx-dd2c5d97ba4ffd06b8d4980de3bfcbdc.scn"]
+
+[params]
+
+nodes/root_type="Node3D"
+nodes/root_name="Scene Root"
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+import_script/path=""
+_subresources={
+"materials": {
+"DefaultMaterial": {
+"use_external/enabled": true,
+"use_external/path": "res://rigidVatTest/rigidBodyTestMat.tres"
+}
+}
+}
+gltf/embedded_image_handling=1

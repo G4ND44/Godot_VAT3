@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://3j5jhme8wnn"]
+
+[ext_resource type="Shader" path="res://clothVatTest/softBodyTest.gdshader" id="1_s88v0"]
+[ext_resource type="Texture2D" uid="uid://02tlb8g4aume" path="res://clothVatTest/tex/Cloth_simumlation_pos.exr" id="2_kiyhg"]
+[ext_resource type="Texture2D" uid="uid://cc8v83bjpplvi" path="res://clothVatTest/tex/Cloth_simumlation_rot.exr" id="3_4qapk"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_s88v0")
+shader_parameter/_isTexHdr = true
+shader_parameter/_boundMax = Vector3(800, -325.5, 500.05)
+shader_parameter/_boundMin = Vector3(-800, -1408.41, -500)
+shader_parameter/_houdiniFPS = 24.0
+shader_parameter/_frameCount = 100.0
+shader_parameter/_surfaceNormals = false
+shader_parameter/_interpolate = true
+shader_parameter/_gameTimeAtFirstFrame = 0.0
+shader_parameter/_playbackSpeed = 1.0
+shader_parameter/_displayFrame = 80.0
+shader_parameter/_autoPlayback = false
+shader_parameter/vatPosTex = ExtResource("2_kiyhg")
+shader_parameter/vatRotTex = ExtResource("3_4qapk")

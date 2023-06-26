@@ -1,0 +1,43 @@
+[gd_scene load_steps=9 format=3 uid="uid://bcdi16oic7e5t"]
+
+[ext_resource type="PackedScene" uid="uid://c50pd3sqma5kp" path="res://clothVatTest/geo/Cloth_simumlation_mesh.fbx" id="2_8t04d"]
+[ext_resource type="PackedScene" uid="uid://du7j1rsd54isr" path="res://clothVatTest/geo/Cloth_simumlation_mesh.gltf" id="3_4qpek"]
+[ext_resource type="PackedScene" uid="uid://c0xyv0gweveot" path="res://clothTest.fbx" id="4_7nmoy"]
+[ext_resource type="PackedScene" uid="uid://dx75bjfr4ru25" path="res://rigidVatTest/geo/vertex_animation_textures1_mesh.fbx" id="5_68770"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4h4pj"]
+
+[sub_resource type="Sky" id="Sky_dbotb"]
+sky_material = SubResource("ProceduralSkyMaterial_4h4pj")
+
+[sub_resource type="Environment" id="Environment_4e70v"]
+background_mode = 2
+sky = SubResource("Sky_dbotb")
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_wv6dd"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="f" parent="." instance=ExtResource("2_8t04d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4938, 8.57791, -47.2068)
+rotation_order = 0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="f"]
+transform = Transform3D(1, 0, 0, 0, 0.827591, 0.561332, 0, -0.561332, 0.827591, -5.24024, 1.61339, 2.25185)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.21053)
+top_level = true
+environment = SubResource("Environment_4e70v")
+attributes = SubResource("CameraAttributesPhysical_wv6dd")
+current = true
+
+[node name="Cloth_simumlation_mesh" parent="." instance=ExtResource("3_4qpek")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.17561, 0, -9.38653)
+
+[node name="clothTest" parent="." instance=ExtResource("4_7nmoy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.58, 8.63673, -34.1644)
+
+[node name="vertex_animation_textures1_mesh" parent="." instance=ExtResource("5_68770")]
+transform = Transform3D(0.993, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
