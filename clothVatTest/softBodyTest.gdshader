@@ -26,6 +26,6 @@ void vertex()
 }
 
 void fragment() {
-	ALBEDO = vec3(0.7, 0.7, 0.7);
+	//ALBEDO = vec3(UV2.x, UV2.y, 0.0);
 	// Place fragment code here.
 }

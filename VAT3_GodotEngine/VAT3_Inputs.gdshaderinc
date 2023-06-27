@@ -131,8 +131,8 @@
 		#if !defined(NO_VAT_TANGENT) && !defined(NO_VAT_NORMAL)
 			nonTexInputs.supportSurfaceNormalMaps = _surfaceNormals;
 		#endif
-		nonTexInputs.boundMax = _boundMax*0.01;
-		nonTexInputs.boundMin = _boundMin*0.01;
+		nonTexInputs.boundMax = _boundMax;
+		nonTexInputs.boundMin = _boundMin;
 
 
 		#if defined(_VAT3MODE_DYNAMICMESH)

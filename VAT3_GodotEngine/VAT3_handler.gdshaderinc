@@ -420,11 +420,11 @@
 		#if defined(_VAT3MODE_RIGIDBODY)
 			//Rigidbody pos offset #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
-				vec4 posTexLastFrame = SAMPLE_TEXTURE2D_LOD( vatPosTex, smp_point_repeat, lastFrameUV, 0.0 );
+				vec4 posTexLastFrame =  textureLod( vatPosTex,lastFrameUV,0);
 
 				vec3 lastFramePosSampleSum = posTexLastFrame.xyz;
 				#if defined(VAT_LOAD_POS_TWO_TEX)
-					vec4 addPosTexLastFrame = SAMPLE_TEXTURE2D_LOD( vatPos2Tex, smp_point_repeat, lastFrameUV, 0.0 );
+					vec4 addPosTexLastFrame = textureLod( vatPos2Tex, lastFrameUV, 0 );
 					lastFramePosSampleSum= addPosTexLastFrame.xyz;
 				#endif
 				vec3 lastFramePosition = isTexHdr ? lastFramePosSampleSum : (lastFramePosSampleSum * inputBoundsRange + nonTexInputs.boundMin);
@@ -436,16 +436,15 @@
 				vec3 interFramePosClamped = (interframeCompare > 0.0f ? interFramePos : lerpPos2Frames);
 				vec3 pieceLocalPositionFinal = nonTexInputs.interframeInterpolation ? interFramePosClamped : thisFramePos;
 			#else
-				//	thisFramePos  *= 0.01f;
 				vec3 pieceLocalPositionFinal = nonTexInputs.interframeInterpolation ? lerpPos2Frames : thisFramePos;
 			#endif
 			float finalPscale = nonTexInputs.particlesPiecesScaleAreInPositionAlpha ? originalPscale : 1.0f;
+			
 			vec3 pieceVectorWithScale = RotateVectorByQuaterion(pieceRelativePivot, lerpedQuaterion) * ((abs(objectSpaceVelocity) * nonTexInputs.stretchByVelocityAmount + vec3(1.0f, 1.0f, 1.0f))*nonTexInputs.globalParticlePiecesPcaleMultiplier * finalPscale); 
 			vec3 pieceVertexPositon = pieceVectorWithScale + pieceLocalPositionFinal;
 			vec3 piecePos = mod(currentFramePlusOne, nonTexInputs.frameCount) != 1.0f ? pieceVertexPositon : vertInput.vertexPosition;
 			vec3 rigidbodyPos = nonTexInputs.animateFirstFrame ? pieceVertexPositon : piecePos;
-			//if(isTexHdr)
-				//rigidbodyPos *= 0.01f;
+
 			vec3 rigidBodyPosPlusOffset = rigidbodyPos+ nonTexInputs.additionalObjectSpaceOffset;
 			//Rigidbody pos offse #END#
 		#endif

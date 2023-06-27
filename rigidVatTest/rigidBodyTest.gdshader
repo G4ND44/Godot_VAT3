@@ -1,8 +1,9 @@
 shader_type spatial;
-render_mode  cull_disabled;
+render_mode unshaded;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
 #define _VAT3MODE_RIGIDBODY
+
 
 
 
@@ -17,24 +18,24 @@ void vertex()
 	vertInputs.vertexNormal = NORMAL;
 	vertInputs.vertexTangent = TANGENT;
 		vec4 vertColors = COLOR;
-	vertInputs.texCoord0 =vec2(vertColors.x, vertColors.y);
-	vertInputs.texCoord1 = vec2(vertColors.z,vertColors.w);
+	vertInputs.texCoord0 =UV;
+	vertInputs.texCoord1 = UV2;
 	//vertInputs.texCoord2 = CUSTOM0.xy;
 
-	vertInputs.texCoord2 = vec2(UV.x, UV.y  );
-	vertInputs.texCoord3 = vec2(UV2.x, UV2.y);
+	vertInputs.texCoord2 =CUSTOM0.xy*vec2(CUSTOM0.x, 1.0- CUSTOM0.y);
+	vertInputs.texCoord3 = vec2(CUSTOM0.z, 1.0- CUSTOM0.w);
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
 	//NORMAL = vatOutputs.outNormal.xyz;
 	//TANGENT = vatOutputs.outTangent;
 
-	//UV = UV2;
+	UV = clamp(	vertInputs.texCoord3.xy,vec2(0.0,0.0),vec2(1.0, 1.0));
 	//COLOR = vatOutputs.outColorAndAlpha.xyz;
 }
 
 void fragment() {
-	//vec2 test = UV- vec2(0.0, 30.0);
-	//ALBEDO = vec3(test.x, test.y ,0.0);
+vec2 test = UV;
+	ALBEDO = vec3(test.y, test.y ,0.0);
 	// Place fragment code here.
 }
