@@ -159,7 +159,7 @@
 	],
 	"nodes":[
 		{
-			"name":"cloth_sim",
+			"name":"geo1",
 			"mesh":0
 		}
 	],
@@ -180,7 +180,7 @@
 					"indices":0
 				}
 			],
-			"name":"transform2"
+			"name":"transform1"
 		}
 	],
 	"scenes":[

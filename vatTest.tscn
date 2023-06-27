@@ -1,9 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://bcdi16oic7e5t"]
+[gd_scene load_steps=8 format=3 uid="uid://bcdi16oic7e5t"]
 
 [ext_resource type="PackedScene" uid="uid://c50pd3sqma5kp" path="res://clothVatTest/geo/Cloth_simumlation_mesh.fbx" id="2_8t04d"]
 [ext_resource type="PackedScene" uid="uid://du7j1rsd54isr" path="res://clothVatTest/geo/Cloth_simumlation_mesh.gltf" id="3_4qpek"]
-[ext_resource type="PackedScene" uid="uid://c0xyv0gweveot" path="res://clothTest.fbx" id="4_7nmoy"]
-[ext_resource type="PackedScene" uid="uid://dx75bjfr4ru25" path="res://rigidVatTest/geo/vertex_animation_textures1_mesh.fbx" id="5_68770"]
+[ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/plandekaVAT.tres" id="3_oguyv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4h4pj"]
 
@@ -34,10 +33,9 @@ attributes = SubResource("CameraAttributesPhysical_wv6dd")
 current = true
 
 [node name="Cloth_simumlation_mesh" parent="." instance=ExtResource("3_4qpek")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.17561, 0, -9.38653)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.51822, 0, -39.9831)
 
-[node name="clothTest" parent="." instance=ExtResource("4_7nmoy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.58, 8.63673, -34.1644)
+[node name="geo1" parent="Cloth_simumlation_mesh" index="0"]
+material_override = ExtResource("3_oguyv")
 
-[node name="vertex_animation_textures1_mesh" parent="." instance=ExtResource("5_68770")]
-transform = Transform3D(0.993, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[editable path="Cloth_simumlation_mesh"]
