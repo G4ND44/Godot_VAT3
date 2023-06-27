@@ -31,7 +31,7 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.9401, 0, -72.1084)
 
 [node name="rigid_body_simulation_mesh_100F" parent="." instance=ExtResource("2_0alca")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.56554, 0, -84.7331)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.87093, 0, -84.7331)
 
 [node name="rigid_body_simulation_mesh_100F2" parent="." instance=ExtResource("2_0alca")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.67194, 0, -71.6696)

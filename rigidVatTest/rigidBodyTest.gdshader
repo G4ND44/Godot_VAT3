@@ -35,7 +35,7 @@ void vertex()
 }
 
 void fragment() {
-vec2 test = UV;
-	ALBEDO = vec3(test.y, test.y ,0.0);
+//vec2 test = UV;
+//	ALBEDO = vec3(test.y, test.y ,0.0);
 	// Place fragment code here.
 }
