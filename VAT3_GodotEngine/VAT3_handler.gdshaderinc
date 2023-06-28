@@ -314,7 +314,7 @@
 			// Object Space Velocity #END#
 
 			// Piece Pivot #START#
-				vec3 pieceRestFrameLocalPosition = vec3(vertInput.texCoord2.x,vertInput.texCoord3.x, 1.0-vertInput.texCoord3.y);
+				vec3 pieceRestFrameLocalPosition = vec3(vertInput.texCoord2.x, vertInput.texCoord3.x, vertInput.texCoord3.y);
 				vec3 pieceRelativePivot = vertInput.vertexPosition - pieceRestFrameLocalPosition;
 			// Piece Pivot #END#
 

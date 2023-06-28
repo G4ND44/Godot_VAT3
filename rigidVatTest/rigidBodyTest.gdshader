@@ -23,7 +23,7 @@ void vertex()
 	//vertInputs.texCoord2 = CUSTOM0.xy;
 
 	vertInputs.texCoord2 =vec2(CUSTOM0.x, CUSTOM0.y);
-	vertInputs.texCoord3 = vec2(CUSTOM0.z, 1.0- CUSTOM0.w);
+	vertInputs.texCoord3 = vec2(CUSTOM0.z, CUSTOM0.w);
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
