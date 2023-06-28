@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://bcdi16oic7e5t"]
+[gd_scene load_steps=9 format=3 uid="uid://bcdi16oic7e5t"]
 
-[ext_resource type="PackedScene" uid="uid://bctk3l4art436" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
+[ext_resource type="PackedScene" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
 [ext_resource type="PackedScene" uid="uid://dhdgtg3oqv5dd" path="res://rigidVatTest/geo/rigid_body_simulation_mesh_100F.gltf" id="2_0alca"]
+[ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/softBodyTestMat.tres" id="2_78af2"]
+[ext_resource type="Material" uid="uid://xha7o7u1vl2h" path="res://rigidVatTest/rigidBodyTestMat.tres" id="3_hpjqd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4h4pj"]
 
@@ -30,8 +32,17 @@ shadow_enabled = true
 [node name="Cloth_simumlation_mesh_mesh_100F" parent="." instance=ExtResource("1_skux8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.9401, 0, -72.1084)
 
+[node name="Mesh2" parent="Cloth_simumlation_mesh_mesh_100F" index="0"]
+material_override = ExtResource("2_78af2")
+
 [node name="rigid_body_simulation_mesh_100F" parent="." instance=ExtResource("2_0alca")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.87093, 0, -84.7331)
 
+[node name="Mesh2" parent="rigid_body_simulation_mesh_100F" index="0"]
+surface_material_override/0 = ExtResource("3_hpjqd")
+
 [node name="rigid_body_simulation_mesh_100F2" parent="." instance=ExtResource("2_0alca")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.67194, 0, -71.6696)
+
+[editable path="Cloth_simumlation_mesh_mesh_100F"]
+[editable path="rigid_body_simulation_mesh_100F"]

@@ -307,8 +307,8 @@
 			// Object Space Velocity #END#
 
 			// Piece Pivot #START#
-				vec3 pieceRestFrameLocalPosition = vec3(vertInput.texCoord2.x * (-1.0f),vertInput.texCoord3.x, 1.0f - vertInput.texCoord3.y);
-				vec3 pieceRelativePivot = vertInput.vertexPosition - pieceRestFrameLocalPosition*0.01f;
+				vec3 pieceRestFrameLocalPosition = vec3(vertInput.texCoord2.x,vertInput.texCoord3.x, 1.0-vertInput.texCoord3.y);
+				vec3 pieceRelativePivot = vertInput.vertexPosition - pieceRestFrameLocalPosition;
 			// Piece Pivot #END#
 
 			// Quaterion #START#
@@ -413,11 +413,13 @@
 			vec3 particleRelRightPos = particleRightDir * nonTexInputs.particleWidthBaseScale * particleScale * (vertInput.texCoord0.x - 0.5f);
 			vec3 particleRelUpPos= particleUpDir  * (vertInput.texCoord0.y - 0.5f) * particleVelocityScale * particleScale;
 			vec3 particleFinalPos = particleRelRightPos + particleRelUpPos + particleLocalPositionFinal;
+			
 			//
 
 		#endif
 			
 		#if defined(_VAT3MODE_RIGIDBODY)
+		thisFramePos*=100.0;
 			//Rigidbody pos offset #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
 				vec4 posTexLastFrame =  textureLod( vatPosTex,lastFrameUV,0);
@@ -446,6 +448,7 @@
 			vec3 rigidbodyPos = nonTexInputs.animateFirstFrame ? pieceVertexPositon : piecePos;
 
 			vec3 rigidBodyPosPlusOffset = rigidbodyPos+ nonTexInputs.additionalObjectSpaceOffset;
+			//vec3 rigidBodyPosPlusOffset = vertInput.vertexPosition - pieceRestFrameLocalPosition;
 			//Rigidbody pos offse #END#
 		#endif
 
