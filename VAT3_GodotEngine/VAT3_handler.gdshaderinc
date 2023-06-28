@@ -32,9 +32,9 @@
         
     vec4 Decode_Quaterion(vec3 XYZ, int maxComponent)
     {
-        float w = sqrt(1.0 - pow(XYZ.x, 2) - pow(XYZ.y, 2) - pow(XYZ.z, 2));
+        float w = sqrt(1.0 - dot(XYZ,XYZ));
         vec4 q = vec4(0, 0, 0, 1);
-
+		
         switch(maxComponent)
         {
             case 0:
