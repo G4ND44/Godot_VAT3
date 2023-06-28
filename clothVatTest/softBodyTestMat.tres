@@ -8,8 +8,8 @@
 render_priority = 0
 shader = ExtResource("1_6am62")
 shader_parameter/_isTexHdr = true
-shader_parameter/_boundMax = Vector3(800, -325.5, 500.05)
-shader_parameter/_boundMin = Vector3(-800, -1408.41, -500)
+shader_parameter/_boundMax = Vector3(8, -3.2, 5.05)
+shader_parameter/_boundMin = Vector3(-8, -14.106, -5)
 shader_parameter/_houdiniFPS = 24.0
 shader_parameter/_frameCount = 100.0
 shader_parameter/_surfaceNormals = false
