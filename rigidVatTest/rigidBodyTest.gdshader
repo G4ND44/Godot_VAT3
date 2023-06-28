@@ -22,7 +22,7 @@ void vertex()
 	vertInputs.texCoord1 = UV2;
 	//vertInputs.texCoord2 = CUSTOM0.xy;
 
-	vertInputs.texCoord2 =CUSTOM0.xy*vec2(CUSTOM0.x, 1.0- CUSTOM0.y);
+	vertInputs.texCoord2 =vec2(CUSTOM0.x, CUSTOM0.y);
 	vertInputs.texCoord3 = vec2(CUSTOM0.z, 1.0- CUSTOM0.w);
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
@@ -36,6 +36,6 @@ void vertex()
 
 void fragment() {
 //vec2 test = UV;
-//	ALBEDO = vec3(test.y, test.y ,0.0);
+	ALBEDO = COLOR.xyz;
 	// Place fragment code here.
 }
