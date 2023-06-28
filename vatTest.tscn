@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://bcdi16oic7e5t"]
 
-[ext_resource type="PackedScene" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
+[ext_resource type="PackedScene" uid="uid://bctk3l4art436" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
 [ext_resource type="PackedScene" uid="uid://dhdgtg3oqv5dd" path="res://rigidVatTest/geo/rigid_body_simulation_mesh_100F.gltf" id="2_0alca"]
 [ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/softBodyTestMat.tres" id="2_78af2"]
 [ext_resource type="Material" uid="uid://xha7o7u1vl2h" path="res://rigidVatTest/rigidBodyTestMat.tres" id="3_hpjqd"]

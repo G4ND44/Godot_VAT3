@@ -152,13 +152,13 @@
 		#if defined(_VAT3MODE_RIGIDBODY) 
 			float animProgressLastFrame = mod(currentFramePlusOne -2.0f, nonTexInputs.frameCount) * frameCountInverse;
 			float samplingLastFrame =  scaledV + animProgressLastFrame * activePixelsRatioY;
-			vec2 lastFrameUV =  vec2(scaledU, 1.0f - samplingLastFrame);
+			vec2 lastFrameUV =  vec2(scaledU,  samplingLastFrame);
 		#endif
 		// Frames UVs  #END#
 
 		// Sample Color Textures #START#
 		// Base Color Tex
-		#if defined(VAT_LOAD_COL_TEX)
+		#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
 			vec4 outColorRgbaThisFrame = textureLod( vatColTex, thisFrameUv,0);
 			vec4 outColorRgbaNextFrame = textureLod( vatColTex, nextFrameUv,0);
 			vec4 interpolatedColorAndAlpha;
@@ -206,8 +206,13 @@
 		vec3 thisFramePosSampleSum = posTexThisFrame.xyz;
 		vec3 nextFramePosSampleSum = posTexNextFrame.xyz;
 		#if defined(VAT_LOAD_POS_TWO_TEX)
-			vec3 addPosTexThisFrame = textureLod( vatPos2Tex,thisFrameUv,0).xyz * 0.01f;
-			vec3 addPosTexNextFrame = textureLod( vatPos2Tex, nextFrameUv,0 ).xyz* 0.01f;
+			vec3 addPosTexThisFrame = textureLod( vatPos2Tex,thisFrameUv,0).xyz;
+			vec3 addPosTexNextFrame = textureLod( vatPos2Tex, nextFrameUv,0 ).xyz;
+			if(isTexHdr)
+			{
+				addPosTexThisFrame*=0.01;
+				addPosTexNextFrame*=0.01;
+			}
 			thisFramePosSampleSum += addPosTexThisFrame;
 			nextFramePosSampleSum += addPosTexNextFrame;
 		#endif
@@ -297,6 +302,8 @@
 			// Object Space Acceleration #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
 				vec3 objectSpaceAcceleration = vec3(outColorRgbaThisFrame.x * (-1.0f),outColorRgbaThisFrame.y, outColorRgbaThisFrame.z);
+				if(isTexHdr)
+					objectSpaceAcceleration*=0.01;
 			#else
 				vec3 objectSpaceAcceleration = vec3(0.0f, 0.0f, 0.0f);
 			#endif
@@ -419,11 +426,11 @@
 		#endif
 			
 		#if defined(_VAT3MODE_RIGIDBODY)
-		thisFramePos*=100.0;
 			//Rigidbody pos offset #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
 				vec4 posTexLastFrame =  textureLod( vatPosTex,lastFrameUV,0);
-
+				if(isTexHdr)
+					posTexLastFrame*=0.01;
 				vec3 lastFramePosSampleSum = posTexLastFrame.xyz;
 				#if defined(VAT_LOAD_POS_TWO_TEX)
 					vec4 addPosTexLastFrame = textureLod( vatPos2Tex, lastFrameUV, 0 );
@@ -434,12 +441,13 @@
 				vec3 centralDifferenceVelocity = (nextFramePos - lastFramePosition) * 0.5f * nonTexInputs.HoudiniFPS;
 				vec3 interFramePos = Interframe_Position(centralDifferenceVelocity, objectSpaceAcceleration,thisFramePos, interpolationAlpha/ nonTexInputs.HoudiniFPS);
 				float framePlusOneFmod = mod( floor(currentFramePlusOne), nonTexInputs.frameCount);
-				float interframeCompare = saturate(abs(framePlusOneFmod -1.0f)) * saturate(abs(framePlusOneFmod - nonTexInputs.frameCount));
+				float interframeCompare = clamp(abs(framePlusOneFmod -1.0f),0.0, 1.0) * clamp(abs(framePlusOneFmod - nonTexInputs.frameCount),0.0, 1.0);
 				vec3 interFramePosClamped = (interframeCompare > 0.0f ? interFramePos : lerpPos2Frames);
 				vec3 pieceLocalPositionFinal = nonTexInputs.interframeInterpolation ? interFramePosClamped : thisFramePos;
 			#else
 				vec3 pieceLocalPositionFinal = nonTexInputs.interframeInterpolation ? lerpPos2Frames : thisFramePos;
 			#endif
+			pieceLocalPositionFinal*=100.0;
 			float finalPscale = nonTexInputs.particlesPiecesScaleAreInPositionAlpha ? originalPscale : 1.0f;
 			
 			vec3 pieceVectorWithScale = RotateVectorByQuaterion(pieceRelativePivot, lerpedQuaterion) * ((abs(objectSpaceVelocity) * nonTexInputs.stretchByVelocityAmount + vec3(1.0f, 1.0f, 1.0f))*nonTexInputs.globalParticlePiecesPcaleMultiplier * finalPscale); 
@@ -614,7 +622,7 @@
 				vertOutputs.outColorRgbaNextFrame = outColorRgbaNextFrame;
 			#endif
 			#if defined(VAT_LOAD_SPARE_COL_TEX)
-				vertOutputs.outSpareColorRGBAThisFrame = spareColorRGBAThisFrame; // do poprawienia, samplowanie pustych textur bez sensu
+				vertOutputs.outSpareColorRGBAThisFrame = spareColorRGBAThisFrame; 
 				vertOutputs.outSpareColorRGBANextFrame = spareColorRGBANextFrame;
 			#endif
 			vertOutputs.outInterframeInterpolationAlpha = interpolationAlpha;

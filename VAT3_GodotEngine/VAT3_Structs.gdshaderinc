@@ -10,7 +10,7 @@ struct Vat3_NonTexInputs {
     float HoudiniFPS;
     bool interframeInterpolation;
     float frameCount;
-    #if defined(VAT_LOAD_COL_TEX)
+   	#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
         bool interpolateColor;
     #endif
     #if defined(VAT_LOAD_SPARE_COL_TEX)

@@ -48,7 +48,7 @@
 	uniform float _displayFrame;
 	uniform bool _autoPlayback;
 	
-	#if defined(VAT_LOAD_COL_TEX)
+	#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
 		uniform bool _interpolateCol;
    		uniform sampler2D vatColTex : filter_nearest, repeat_disable;
    	#endif
