@@ -59,7 +59,7 @@ func load_vat(_JSON_PATH: String):
 		push_warning("Material must be set")
 		return
 	
-	setup_vat("res://clothVatTest/data/Cloth_simumlation_mesh_data.json")
+	setup_vat(_JSON_PATH)
 
 
 # Called when the node enters the scene tree for the first time.

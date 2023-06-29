@@ -139,12 +139,13 @@
 		#if defined(_VAT3MODE_DYNAMICMESH) 
 			float lookupTableMaxRange = reverseBoundXFract > 0.5f ? 2048.0f : 255.0f;
 			vec4 lookupTableThisFrame = textureLod( vatLookupTex,relativeThisFrameUv,0);
-			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv.,0);
+			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv,0);
 			vec2 dynameshThisFrameUv = vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange, 1.0f - (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
 			vec2 dynameshThisNextUv = vec2(lookupTableNextFrame.x + lookupTableNextFrame.y/lookupTableMaxRange, 1.0f - (lookupTableNextFrame.z + lookupTableNextFrame.w/lookupTableMaxRange));
 
 			vec2 thisFrameUv = dynameshThisFrameUv;
 			vec2 nextFrameUv = dynameshThisNextUv;
+			
 		#else
 			vec2 thisFrameUv = relativeThisFrameUv;
 			vec2 nextFrameUv = relativeNextFrameUv;

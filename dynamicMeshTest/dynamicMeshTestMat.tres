@@ -1,0 +1,25 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://dao6jbdg5yog"]
+
+[ext_resource type="Shader" path="res://dynamicMeshTest/dynamicMeshTest.gdshader" id="1_ta852"]
+[ext_resource type="Texture2D" uid="uid://b5kmd72lw130h" path="res://dynamicMeshTest/tex/fluidSimulation_lookup.exr" id="2_mege4"]
+[ext_resource type="Texture2D" uid="uid://g7a7er4loeml" path="res://dynamicMeshTest/tex/fluidSimulation_pos.exr" id="3_467k2"]
+[ext_resource type="Texture2D" uid="uid://eimvwikuf7xk" path="res://dynamicMeshTest/tex/fluidSimulation_rot.exr" id="4_a8qpo"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ta852")
+shader_parameter/_isTexHdr = true
+shader_parameter/_boundMax = Vector3(6.07, 3.3, 5.55)
+shader_parameter/_boundMin = Vector3(-9.1, -7.33, -6.3)
+shader_parameter/_houdiniFPS = 24.0
+shader_parameter/_uvFromRG = null
+shader_parameter/_frameCount = 100.0
+shader_parameter/_surfaceNormals = null
+shader_parameter/_interpolate = null
+shader_parameter/_gameTimeAtFirstFrame = null
+shader_parameter/_playbackSpeed = 1.0
+shader_parameter/_displayFrame = null
+shader_parameter/_autoPlayback = true
+shader_parameter/vatPosTex = ExtResource("3_467k2")
+shader_parameter/vatRotTex = ExtResource("4_a8qpo")
+shader_parameter/vatLookupTex = ExtResource("2_mege4")
