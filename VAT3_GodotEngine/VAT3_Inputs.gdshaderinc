@@ -67,6 +67,7 @@
     	uniform sampler2D vatRotTex : filter_nearest, repeat_disable;
 	#endif
 	#if defined(_VAT3MODE_DYNAMICMESH) 
+		uniform bool _lookupTexIsHdr;
 		uniform sampler2D vatLookupTex : filter_nearest, repeat_disable;
 	#endif
 
@@ -74,6 +75,9 @@
 	{
 		nonTexInputs.autoPlayback = _autoPlayback;
 		nonTexInputs.gameTimeAtFirstFrame = _gameTimeAtFirstFrame;
+		#if defined(_VAT3MODE_DYNAMICMESH) 
+			nonTexInputs.isLookuptexHdr = _lookupTexIsHdr;
+		#endif
 		
 		nonTexInputs.playbackSpeed = _playbackSpeed;
 		nonTexInputs.displayFrame = _displayFrame;

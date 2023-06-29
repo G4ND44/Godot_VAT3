@@ -26,6 +26,7 @@ struct Vat3_NonTexInputs {
 
     #if defined(_VAT3MODE_DYNAMICMESH)
         bool surfaceUVsfromColorRG;
+		bool isLookuptexHdr;
     #elif defined(_VAT3MODE_RIGIDBODY)
         bool stretchByVelocity;
         float stretchByVelocityAmount;

@@ -1,0 +1,9 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://63idaiaidx64"]
+
+[ext_resource type="Shader" path="res://debuShader.gdshader" id="1_yoh1r"]
+[ext_resource type="Texture2D" uid="uid://b5kmd72lw130h" path="res://dynamicMeshTest/tex/fluidSimulation_lookup.exr" id="2_v3igk"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_yoh1r")
+shader_parameter/testTex = ExtResource("2_v3igk")

@@ -135,15 +135,26 @@
 		float samplingVNextFrame =  scaledV + animProgressNextFrame * activePixelsRatioY;
 		vec2 relativeThisFrameUv = vec2(scaledU, samplingVThisFrame);
 		vec2 relativeNextFrameUv= vec2(scaledU, samplingVNextFrame);
+	
 
 		#if defined(_VAT3MODE_DYNAMICMESH) 
-			float lookupTableMaxRange = reverseBoundXFract > 0.5f ? 2048.0f : 255.0f;
+			float lookupTableMaxRange = nonTexInputs.isLookuptexHdr ? 2048.0f : 255.0f; // it is max range for texure
+			//lookupTableMaxRange*=1.0;
+			vec2 lookupTexSize = vec2(textureSize(vatLookupTex,0));
+			ivec2 thisFrameCoord = ivec2(lookupTexSize * relativeThisFrameUv);
+			
 			vec4 lookupTableThisFrame = textureLod( vatLookupTex,relativeThisFrameUv,0);
+			//lookupTableThisFrame.yw *= 10.0;
 			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv,0);
-			vec2 dynameshThisFrameUv = vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange, 1.0f - (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
-			vec2 dynameshThisNextUv = vec2(lookupTableNextFrame.x + lookupTableNextFrame.y/lookupTableMaxRange, 1.0f - (lookupTableNextFrame.z + lookupTableNextFrame.w/lookupTableMaxRange));
+			//vec4 lookupTableThisFrame = texelFetch( vatLookupTex,thisFrameCoord,0);
+			//lookupTableNextFrame.z = 1.0 - lookupTableNextFrame.z;
+			//lookupTableNextFrame.x = 1.0 - lookupTableNextFrame.x;
+			vec2 dynameshThisFrameUv = vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange,  (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
+			vec2 dynameshThisNextUv = vec2(lookupTableNextFrame.x + lookupTableNextFrame.y/lookupTableMaxRange, (lookupTableNextFrame.z + lookupTableNextFrame.w/lookupTableMaxRange));
 
-			vec2 thisFrameUv = dynameshThisFrameUv;
+
+			//vec2 thisFrameUv = dynameshThisFrameUv;
+				vec2 thisFrameUv = vec2(dynameshThisFrameUv.x, dynameshThisFrameUv.y);
 			vec2 nextFrameUv = dynameshThisNextUv;
 			
 		#else
@@ -189,11 +200,14 @@
 		// This frame, next and lerped position #START#
 		vec4 posTexThisFrame = textureLod( vatPosTex, thisFrameUv,0);
 		vec4 posTexNextFrame = textureLod( vatPosTex, nextFrameUv,0);
-		if(isTexHdr)
-		{
-			posTexThisFrame.xyz*= 0.01f;
-			posTexNextFrame.xyz*= 0.01f;
-		}
+		#if !defined(_VAT3MODE_DYNAMICMESH) 
+			if(isTexHdr)
+			{
+				posTexThisFrame.xyz*= 0.01f;
+				posTexNextFrame.xyz*= 0.01f;
+			}
+		#endif
+		//posTexThisFrame.xyz = posTexNextFrame.xyz;
 				//posTexThisFrame.r *=-1.0f; 
 		//posTexNextFrame.rgb *=0.5; 
 		//posTexThisFrame.rgb *= sqrt(posTexThisFrame.rgb);
@@ -585,6 +599,7 @@
 			{
 				surfaceUv = vec2(posAlphaThisFrame, 1.0f - interpolatedColorAndAlpha.a); 
 			}
+			
 		#else
 			vec2 surfaceUv =  vertInput.texCoord0;
 		#endif
