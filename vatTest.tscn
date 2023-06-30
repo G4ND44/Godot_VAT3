@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bcdi16oic7e5t"]
+[gd_scene load_steps=16 format=3 uid="uid://bcdi16oic7e5t"]
 
 [ext_resource type="PackedScene" uid="uid://bctk3l4art436" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
 [ext_resource type="PackedScene" uid="uid://dhdgtg3oqv5dd" path="res://rigidVatTest/geo/rigid_body_simulation_mesh_100F.gltf" id="2_0alca"]
@@ -9,6 +9,8 @@
 [ext_resource type="Material" uid="uid://dao6jbdg5yog" path="res://dynamicMeshTest/dynamicMeshTestMat.tres" id="7_88glp"]
 [ext_resource type="PackedScene" uid="uid://dr1nxsus42qux" path="res://testSuzane.glb" id="8_cfiek"]
 [ext_resource type="Material" uid="uid://63idaiaidx64" path="res://debugMaterial.tres" id="9_812qx"]
+[ext_resource type="PackedScene" uid="uid://ciobim5ryayjk" path="res://particleVatTest/geo/particles_simulation_mesh_100F.gltf" id="10_erqmm"]
+[ext_resource type="Material" uid="uid://coxi0nbsn5s2f" path="res://particleVatTest/particlesTestMat.tres" id="11_oln0i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4h4pj"]
 
@@ -71,7 +73,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.6291, 0, -93.3022)
 [node name="Suzanne" parent="testSuzane" index="0"]
 surface_material_override/0 = ExtResource("9_812qx")
 
+[node name="particles_simulation_mesh_100F" parent="." instance=ExtResource("10_erqmm")]
+
+[node name="Mesh2" parent="particles_simulation_mesh_100F" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.2605, 0, -100.216)
+surface_material_override/0 = ExtResource("11_oln0i")
+script = ExtResource("3_k5hr2")
+JSON_PATH = "res://particleVatTest/data/particles_simulation_data.json"
+VAT_axis_system = "Right-Handed Y-Up"
+VAT_bound_max = Vector3(13.8, 15.6, 11.95)
+VAT_bound_min = Vector3(-14.5, -15.705, -11.5)
+VAT_houdini_fps = 24.0
+VAT_name = "VAT"
+vat_material = ExtResource("11_oln0i")
+
 [editable path="Cloth_simumlation_mesh_mesh_100F"]
 [editable path="rigid_body_simulation_mesh_100F"]
 [editable path="fluidSimulation_mesh_100F"]
 [editable path="testSuzane"]
+[editable path="particles_simulation_mesh_100F"]

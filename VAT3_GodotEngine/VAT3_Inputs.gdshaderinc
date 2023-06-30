@@ -6,14 +6,7 @@
 	
 	uniform vec3 _boundMax;
 	uniform vec3 _boundMin;
-	//uniform float _boundMaxX;
-	//uniform float _boundMaxY;
-	//uniform float _boundMaxZ;
-			
-	//uniform float _boundMinX;
-	//uniform float _boundMinY;
-	//uniform float _boundMinZ;
-		
+
 	uniform float _houdiniFPS; //
 	
 	 #if defined(_VAT3MODE_DYNAMICMESH)
@@ -63,7 +56,7 @@
 	#endif
 	
 
-	#if !defined(NO_VAT_NORMAL) && !defined(VAT_USE_COMPRESSED_NORMALS)
+	#if !defined(NO_VAT_NORMAL) && !defined(VAT_USE_COMPRESSED_NORMALS) && !defined(_VAT3MODE_PARTICLES)
     	uniform sampler2D vatRotTex : filter_nearest, repeat_disable;
 	#endif
 	#if defined(_VAT3MODE_DYNAMICMESH) 
@@ -178,7 +171,4 @@
 		return defaultNonTexInputs;
 	}
 	
-	#if defined(_VAT3MODE_PARTICLES)
-		mat4 transpModelView = transpose(MODEL_MATRIX * VIEW_MATRIX);
-	#endif
 #endif

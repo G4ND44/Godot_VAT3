@@ -33,28 +33,19 @@
     vec4 Decode_Quaterion(vec3 XYZ, int maxComponent)
     {
         float w = sqrt(1.0 - dot(XYZ,XYZ));
-        vec4 q = vec4(0, 0, 0, 1);
-		
         switch(maxComponent)
         {
             case 0:
-                q = vec4(XYZ.x, XYZ.y, XYZ.z, w);
-                break;
+                return vec4(XYZ.x, XYZ.y, XYZ.z, w);
             case 1:
-                q = vec4(w, XYZ.y, XYZ.z, XYZ.x);
-                break;
+                return vec4(w, XYZ.y, XYZ.z, XYZ.x);
             case 2:
-                q = vec4(XYZ.x, w, XYZ.z, XYZ.y);
-                break;
+                return vec4(XYZ.x, w, XYZ.z, XYZ.y);
             case 3:
-                q = vec4(XYZ.x, XYZ.y, w, XYZ.z);
-                break;
+                return vec4(XYZ.x, XYZ.y, w, XYZ.z);
             default:
-                q = vec4(XYZ.x, XYZ.y, XYZ.z, w);
-                break;
+                return vec4(XYZ.x, XYZ.y, XYZ.z, w);
         }
-
-        return q;
     }
 	vec3 RotateVectorByQuaterion(vec3 vect, vec4 quat)
 	{
@@ -196,7 +187,7 @@
 		// This frame, next and lerped position #START#
 		vec4 posTexThisFrame = textureLod( vatPosTex, thisFrameUv,0);
 		vec4 posTexNextFrame = textureLod( vatPosTex, nextFrameUv,0);
-		#if !defined(_VAT3MODE_DYNAMICMESH) 
+		#if defined(_VAT3MODE_SOFTBODY) || defined(_VAT3MODE_RIGIDBODY)
 			if(isTexHdr)
 			{
 				posTexThisFrame.xyz*= 0.01f;
@@ -275,7 +266,7 @@
 		#endif
 		// pscale #END#
 		// Decode compressed normals #START#
-		#if !defined(NO_VAT_NORMAL) || defined(_VAT3MODE_RIGIDBODY)
+		#if (!defined(NO_VAT_NORMAL) && !defined(_VAT3MODE_PARTICLES)) || defined(_VAT3MODE_RIGIDBODY)
 			#if (defined(_VAT3MODE_DYNAMICMESH) || defined(_VAT3MODE_SOFTBODY)) && defined(VAT_USE_COMPRESSED_NORMALS)
 					vec3 recoverComprNormal;
 					if(nonTexInputs.interframeInterpolation)
@@ -338,34 +329,34 @@
 		#endif
 
 		#if defined(_VAT3MODE_PARTICLES)
+
 			// Particle Velocity and Vector #START#
 			#if defined(VAT_VIEWXY_SOURCE_COLOR_RGB)
-				vec3 particlePosDelta = vec3(interpolatedColorAndAlpha.x * (-1.0f), interpolatedColorAndAlpha.y, interpolatedColorAndAlpha.z);
+				vec3 particlePosDelta = vec3(interpolatedColorAndAlpha.x, interpolatedColorAndAlpha.y, interpolatedColorAndAlpha.z);
 			#else
 				vec3 particlePosDelta = nextFramePos - thisFramePos;
 			#endif
 
-
-			vec3 particleWorldPosDelta =  (MODEL_MATRIX * vec4(particlePosDelta.x, particlePosDelta.y, particlePosDelta.z, 0.0f)).xyz;
-			vec3 particlesViewPosDelta =  (VIEW_MATRIX * vec4(particleWorldPosDelta.x, particleWorldPosDelta.y, particleWorldPosDelta.z, 0.0f)).xyz;
+			vec3 particleWorldPosDelta =  (nonTexInputs.modelMatrix * vec4(particlePosDelta.x, particlePosDelta.y, particlePosDelta.z, 0.0f)).xyz;
+			vec3 particlesViewPosDelta =  (nonTexInputs.viewMatrix  * vec4(particleWorldPosDelta.x, particleWorldPosDelta.y, particleWorldPosDelta.z, 0.0f)).xyz;
 			vec2 posDeltaView2d = particlesViewPosDelta.xy;
 			vec3 posDeltaView = vec3(posDeltaView2d.x, posDeltaView2d.y, 0.0f);
-			vec3 particleViewSpaceVector = normalize(posDeltaView);
-			float particleVelocity = length(particleVelocity);
+
+			float particleVelocity = length(posDeltaView);
 			// Particle Velocity and Vector #END#
 
 			// Particle Velocity Scale #START# ??
 			#if defined(VAT_CAN_SPIN)
 				float particleVelocityScale = nonTexInputs.computeSpinfromHeadingVector ? nonTexInputs.scalebyVelocityAmount * nonTexInputs.perParticleRandomVelocityScale * particleVelocity * nonTexInputs.particleHeightBaseScale : nonTexInputs.particleHeightBaseScale;
 			#else
-			//	float particleVelocityScale = nonTexInputs.particleHeightBaseScale;
+				float particleVelocityScale = nonTexInputs.particleHeightBaseScale;
 			#endif
 			// Particle Velocity Scale #END#
 			 
 			// Particle Local Pos #START#
 			vec3 particleLocalPositionFinal;
-			float particleEnabledThisFrame = saturate(sign(length(thisFramePos) - nonTexInputs.originEffectiveRadius));
-			float particleEnabledNextFrame = saturate(sign(length(nextFramePos) - nonTexInputs.originEffectiveRadius));
+			float particleEnabledThisFrame = clamp(sign(length(thisFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
+			float particleEnabledNextFrame = clamp(sign(length(nextFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
 
 			// theres should be another co if particles are looped then lerped pos should be diffrent
 			if(!nonTexInputs.particlesPiecesScaleAreInPositionAlpha)
@@ -375,7 +366,6 @@
 			}else
 				particleLocalPositionFinal = lerpedPos;
 			// Particle Local Pos #END#
-
 			// Particle Scale #START#
 			float particleScaleMultiplier = nonTexInputs.globalParticlePiecesPcaleMultiplier * nonTexInputs.additionalParticleScaleUniformMultiplier;
 			float particleScale;
@@ -404,6 +394,7 @@
 				vec3 viewRightVector;
 				if(nonTexInputs.computeSpinfromHeadingVector)
 				{
+					vec3 particleViewSpaceVector = normalize(posDeltaView);
 					viewRightVector = normalize(cross(particleViewSpaceVector, vec3(0.0f, 0.0f, 1.0f))); 
 				}else
 				{
@@ -412,14 +403,14 @@
 					#else
 						float particleSpin = fract(nonTexInputs.particleSpinPhase * nonTexInputs.perParticleRandomSpinSpeed) * TAU;
 					#endif
-					viewRightVector = vec3(cos(particleSpin), sin(particleSpin), 0.0f);
+					viewRightVector = vec3(sin(particleSpin), cos(particleSpin), 0.0f);
 				}
-				vec3 particleRightDir = ( transpModelView * vec4(viewRightVector.x, viewRightVector.y, viewRightVector.z, 0.0f) ).xyz; // view to object
-				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, -1.0f));
-				vec3 particleUpDir = ( transpModelView * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
+				vec3 particleRightDir = ( nonTexInputs.transposeModelViewMatrix * vec4(viewRightVector.x, viewRightVector.y, viewRightVector.z, 0.0f) ).xyz; // view to object
+				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, 1.0f));
+				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
 			#else
-				vec3 particleRightDir = ( transpModelView * vec4(1.0f, 0.0f, 0.0f,0.0f)).xyz;
-				vec3 particleUpDir = ( transpModelView * vec4(0.0f, 1.0f, 0.0f,0.0f)).xyz;
+				vec3 particleRightDir = (  nonTexInputs.transposeModelViewMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
+				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(0.0f, 1.0f, 0.0f,0.0f)).xyz;
 			#endif
 			// Particle Up and Right #END#
 
@@ -558,7 +549,7 @@
 					#endif
 				#elif defined(_VAT3MODE_PARTICLES)// particles
 					#if !defined(NO_VAT_NORMAL)
-						outNormal = normalize( ( transpModelView * vec4(0.0f, 0.0f, 1.0f,0.0f) ).xyz);
+						outNormal = normalize( ( nonTexInputs.transposeModelViewMatrix * vec4(0.0f, 0.0f, 1.0f,0.0f) ).xyz);
 						#if !defined(NO_VAT_TANGENT)
 							outTangent = nonTexInputs.supportSurfaceNormalMaps ? particleRightDir :  vec3(0.0f, 0.0f, 0.0f); 
 						#endif
