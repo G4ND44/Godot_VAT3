@@ -409,7 +409,7 @@
 				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, 1.0f));
 				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
 			#else
-				vec3 particleRightDir = (  nonTexInputs.transposeModelViewMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
+				vec3 particleRightDir = normalize(  nonTexInputs.transposeModelViewMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
 				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(0.0f, 1.0f, 0.0f,0.0f)).xyz;
 			#endif
 			// Particle Up and Right #END#

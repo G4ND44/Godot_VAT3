@@ -51,7 +51,7 @@ VAT_name = "VAT"
 vat_material = ExtResource("2_78af2")
 
 [node name="rigid_body_simulation_mesh_100F" parent="." instance=ExtResource("2_0alca")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.87093, 0, -84.7331)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 142.801, -2.38419e-07, -84.7305)
 
 [node name="Mesh2" parent="rigid_body_simulation_mesh_100F" index="0"]
 surface_material_override/0 = ExtResource("3_hpjqd")
