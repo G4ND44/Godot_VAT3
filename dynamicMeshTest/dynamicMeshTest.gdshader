@@ -2,8 +2,8 @@ shader_type spatial;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
 #define _VAT3MODE_DYNAMICMESH
+#define VAT_LOAD_COL_TEX
 
-	
 #include "res://VAT3_GodotEngine/VAT3_handler.gdshaderinc"
 
 void vertex()
@@ -24,13 +24,13 @@ void vertex()
 	
 	UV = vatOutputs.surfaceUv;
 
-	//COLOR = vatOutputs.outColorAndAlpha.xyz;
+	COLOR = vatOutputs.outColorAndAlpha;
 }
 
 void fragment() {
-//	float threshold = 0.7;
-//vec3 test =  UV.y > threshold? vec3(0.0, 1.0, 1.0) : vec3(0.0,0.0,0.0);
+	//float threshold = 1.1;
+//vec3 test =  UV.x > threshold? vec3( 0.0f,1000000.0f,0.0f) : vec3(0.0,0.0,0.0);
 
-	//ALBEDO = test;
+ALBEDO = COLOR.rgb;
 	// Place fragment code here.
 }

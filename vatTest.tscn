@@ -61,7 +61,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.67194, 0, -71.6696)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.7257, 0, -85.4753)
 
 [node name="Mesh2" parent="fluidSimulation_mesh_100F" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.82005)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.98587, 6.27979, -3.82005)
 surface_material_override/0 = ExtResource("7_88glp")
 script = ExtResource("3_k5hr2")
 

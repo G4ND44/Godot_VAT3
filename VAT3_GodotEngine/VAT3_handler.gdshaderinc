@@ -129,32 +129,28 @@
 		#else
 			vec2 samplingInputUvs = vertInput.texCoord1;
 		#endif
-		float scaledU = (samplingInputUvs.x) * activePixelsRatioX;
-		float scaledV = (samplingInputUvs.y) * activePixelsRatioY ;
-		float samplingVThisFrame = scaledV + animProgressThisFrame * activePixelsRatioY;
-		float samplingVNextFrame =  scaledV + animProgressNextFrame * activePixelsRatioY;
-		vec2 relativeThisFrameUv = vec2(scaledU, samplingVThisFrame);
-		vec2 relativeNextFrameUv= vec2(scaledU, samplingVNextFrame);
+		#ifndef _VAT3MODE_DYNAMICMESH
+			float scaledU = (samplingInputUvs.x) * activePixelsRatioX;
+			float scaledV = (samplingInputUvs.y) * activePixelsRatioY ;
+			float samplingVThisFrame = scaledV + animProgressThisFrame * activePixelsRatioY;
+			float samplingVNextFrame =  scaledV + animProgressNextFrame * activePixelsRatioY;
+			vec2 relativeThisFrameUv = vec2(scaledU, samplingVThisFrame);
+			vec2 relativeNextFrameUv= vec2(scaledU, samplingVNextFrame);
+		#else
+			vec2 relativeThisFrameUv =samplingInputUvs +vec2(0.0, animProgressThisFrame);
+			vec2 relativeNextFrameUv= samplingInputUvs +vec2(0.0, animProgressNextFrame);
+		#endif
 	
 
 		#if defined(_VAT3MODE_DYNAMICMESH) 
 			float lookupTableMaxRange = nonTexInputs.isLookuptexHdr ? 2048.0f : 255.0f; // it is max range for texure
-			//lookupTableMaxRange*=1.0;
-			vec2 lookupTexSize = vec2(textureSize(vatLookupTex,0));
-			ivec2 thisFrameCoord = ivec2(lookupTexSize * relativeThisFrameUv);
-			
 			vec4 lookupTableThisFrame = textureLod( vatLookupTex,relativeThisFrameUv,0);
-			//lookupTableThisFrame.yw *= 10.0;
 			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv,0);
-			//vec4 lookupTableThisFrame = texelFetch( vatLookupTex,thisFrameCoord,0);
-			//lookupTableNextFrame.z = 1.0 - lookupTableNextFrame.z;
-			//lookupTableNextFrame.x = 1.0 - lookupTableNextFrame.x;
-			vec2 dynameshThisFrameUv = vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange,  (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
+			
+			vec2 dynameshThisFrameUv =  vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange, (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
 			vec2 dynameshThisNextUv = vec2(lookupTableNextFrame.x + lookupTableNextFrame.y/lookupTableMaxRange, (lookupTableNextFrame.z + lookupTableNextFrame.w/lookupTableMaxRange));
 
-
-			//vec2 thisFrameUv = dynameshThisFrameUv;
-				vec2 thisFrameUv = vec2(dynameshThisFrameUv.x, dynameshThisFrameUv.y);
+			vec2 thisFrameUv  = dynameshThisFrameUv;
 			vec2 nextFrameUv = dynameshThisNextUv;
 			
 		#else
@@ -295,10 +291,6 @@
 						rotTexNextFrame -= vec4(0.5f, 0.5f, 0.5f, 0.5f);
 						rotTexThisFrame *= 2.0f;
 						rotTexNextFrame *= 2.0f;
-					}else	
-					{
-						//rotTexThisFrame*=0.01;
-						//rotTexNextFrame*=0.01;
 					}
 					vec4 rotThisFrameToDecode = rotTexThisFrame;
 					vec4 rotNextFrameToDecode = rotTexNextFrame;
@@ -599,7 +591,6 @@
 			{
 				surfaceUv = vec2(posAlphaThisFrame, 1.0f - interpolatedColorAndAlpha.a); 
 			}
-			
 		#else
 			vec2 surfaceUv =  vertInput.texCoord0;
 		#endif
