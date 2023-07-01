@@ -4,6 +4,18 @@
 	#include "VAT3_Structs.gdshaderinc"
 	#include "VAT3_Inputs.gdshaderinc"
 	
+	float fmod(float a, float b)
+	{
+	  float c = fract(abs(a/b))*abs(b);
+	  return (a < 0.0f) ? -c : c;   /* if ( a < 0 ) c = 0-c */
+	}
+	
+	vec3 SafeNormalize(vec3 vec)
+	{
+	    float dp3 = max(6.103515625e-5 , dot(vec, vec));
+	    return vec * inversesqrt(dp3);
+	}
+	
 	vec3 Interframe_Position(vec3 V, vec3 A, vec3 P, float T)
 	{
 		return  (V * T + 0.5 * A * T * T + P);
@@ -91,7 +103,7 @@
 		vec3 inputBoundsRange =  nonTexInputs.boundMax -  nonTexInputs.boundMin;
 
 		float activePixelsRatioX = 1.0f - (ceil(boundMin.z) - boundMin.z);
-		float activePixelsRatioY = 1.0f - fract(boundMax.x * (-1.0f));
+		float activePixelsRatioY = 1.0f -(ceil(boundMin.x) - boundMin.x);
 
 		bool isTexHdr = nonTexInputs.isTexHdr;
 		float maxDataPscale = 1.0f / (1.0f - fract(boundMax.y));
@@ -110,8 +122,12 @@
 		float currentFramePlusOne = nonTexInputs.autoPlayback ? floor(loopedAnimFrame + 1.0f) : floor(nonTexInputs.displayFrame);
 		float interpolationAlpha = fract(currentFrame);
 		float frameCountInverse = (1.0f/ nonTexInputs.frameCount);
-		float animProgressThisFrame = mod( currentFramePlusOne - 1.0f, nonTexInputs.frameCount) * frameCountInverse;
-		float animProgressNextFrame = mod(currentFramePlusOne, nonTexInputs.frameCount) * frameCountInverse;
+		float animProgressThisFrame = fmod( currentFramePlusOne - 1.0f, nonTexInputs.frameCount) * frameCountInverse;
+		float animProgressNextFrame = fmod(currentFramePlusOne, nonTexInputs.frameCount) * frameCountInverse;
+		//float animProgressThisFrame = currentFramePlusOne - 1.0f < 0.0 ? nonTexInputs.frameCount - currentFramePlusOne : currentFramePlusOne - 1.0f;
+		//float animProgressNextFrame = currentFramePlusOne > nonTexInputs.frameCount ? currentFramePlusOne - nonTexInputs.frameCount : currentFramePlusOne;
+		//animProgressThisFrame*=frameCountInverse;
+		//animProgressNextFrame*=frameCountInverse;
 		// Time calculations  #END#
 
 		// Frames UVs #START#
@@ -233,7 +249,14 @@
 		}
 		vec3 thisFramePos = thisFramePosSampleSum;
 		vec3 nextFramePos = nextFramePosSampleSum;
-		vec3 lerpPos2Frames = mix(thisFramePos,nextFramePos, interpolationAlpha);
+		#if defined(_VAT3MODE_PARTICLES) 
+			float particleEnabledThisFrame = clamp(sign(length(thisFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
+			float particleEnabledNextFrame = clamp(sign(length(nextFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
+			vec3 lerpPos2Frames = mix(thisFramePos,nextFramePos, interpolationAlpha);
+		#else
+			vec3 lerpPos2Frames = mix(thisFramePos,nextFramePos, interpolationAlpha);
+		#endif
+		
 		vec3 lerpedPos = nonTexInputs.interframeInterpolation ? lerpPos2Frames : thisFramePos;
 		// This frame, next and lerped position  #END#
 
@@ -334,29 +357,27 @@
 			#if defined(VAT_VIEWXY_SOURCE_COLOR_RGB)
 				vec3 particlePosDelta = vec3(interpolatedColorAndAlpha.x, interpolatedColorAndAlpha.y, interpolatedColorAndAlpha.z);
 			#else
-				vec3 particlePosDelta = nextFramePos - thisFramePos;
+				vec3 particlePosDelta = (nextFramePos - thisFramePos);
 			#endif
-
-			vec3 particleWorldPosDelta =  (nonTexInputs.modelMatrix * vec4(particlePosDelta.x, particlePosDelta.y, particlePosDelta.z, 0.0f)).xyz;
-			vec3 particlesViewPosDelta =  (nonTexInputs.viewMatrix  * vec4(particleWorldPosDelta.x, particleWorldPosDelta.y, particleWorldPosDelta.z, 0.0f)).xyz;
+			vec3 particlesViewPosDelta =  (nonTexInputs.modelViewMatrix * vec4(particlePosDelta.x, particlePosDelta.y, particlePosDelta.z, 0.0f)).xyz;
 			vec2 posDeltaView2d = particlesViewPosDelta.xy;
 			vec3 posDeltaView = vec3(posDeltaView2d.x, posDeltaView2d.y, 0.0f);
 
-			float particleVelocity = length(posDeltaView);
+			float particleVelocityMagnitude =currentFramePlusOne >= nonTexInputs.frameCount ?  1.0 : nonTexInputs.scalebyVelocityAmount * nonTexInputs.perParticleRandomVelocityScale* length(posDeltaView);
 			// Particle Velocity and Vector #END#
 
 			// Particle Velocity Scale #START# ??
 			#if defined(VAT_CAN_SPIN)
-				float particleVelocityScale = nonTexInputs.computeSpinfromHeadingVector ? nonTexInputs.scalebyVelocityAmount * nonTexInputs.perParticleRandomVelocityScale * particleVelocity * nonTexInputs.particleHeightBaseScale : nonTexInputs.particleHeightBaseScale;
+				float particleVelocityScale = nonTexInputs.computeSpinfromHeadingVector ?   particleVelocityMagnitude * nonTexInputs.particleHeightBaseScale : nonTexInputs.particleHeightBaseScale;
 			#else
 				float particleVelocityScale = nonTexInputs.particleHeightBaseScale;
 			#endif
+			//particleVelocityScale = currentFramePlusOne >= nonTexInputs.frameCount ? nonTexInputs.particleHeightBaseScale : particleVelocityScale;
 			// Particle Velocity Scale #END#
 			 
 			// Particle Local Pos #START#
 			vec3 particleLocalPositionFinal;
-			float particleEnabledThisFrame = clamp(sign(length(thisFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
-			float particleEnabledNextFrame = clamp(sign(length(nextFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
+
 
 			// theres should be another co if particles are looped then lerped pos should be diffrent
 			if(!nonTexInputs.particlesPiecesScaleAreInPositionAlpha)
@@ -405,18 +426,18 @@
 					#endif
 					viewRightVector = vec3(sin(particleSpin), cos(particleSpin), 0.0f);
 				}
-				vec3 particleRightDir = ( nonTexInputs.transposeModelViewMatrix * vec4(viewRightVector.x, viewRightVector.y, viewRightVector.z, 0.0f) ).xyz; // view to object
-				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, 1.0f));
-				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
+				vec3 particleRightDir = normalize( nonTexInputs.viewToModelMatrix * vec4(viewRightVector.x, viewRightVector.y, viewRightVector.z, 0.0f) ).xyz; // view to object
+				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, -1.0f));
+				vec3 particleUpDir = (  nonTexInputs.viewToModelMatrix * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
 			#else
-				vec3 particleRightDir = normalize(  nonTexInputs.transposeModelViewMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
-				vec3 particleUpDir = (  nonTexInputs.transposeModelViewMatrix * vec4(0.0f, 1.0f, 0.0f,0.0f)).xyz;
+				vec3 particleRightDir = normalize(  nonTexInputs.viewToModelMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
+				vec3 particleUpDir = (  nonTexInputs.viewToModelMatrix * vec4(0.0f, 1.0f, 0.0f,0.0f)).xyz;
 			#endif
 			// Particle Up and Right #END#
 
 			//Particle Final Pos 
 			vec3 particleRelRightPos = particleRightDir * nonTexInputs.particleWidthBaseScale * particleScale * (vertInput.texCoord0.x - 0.5f);
-			vec3 particleRelUpPos= particleUpDir  * (vertInput.texCoord0.y - 0.5f) * particleVelocityScale * particleScale;
+			vec3 particleRelUpPos= particleUpDir * (vertInput.texCoord0.y - 0.5f) * particleVelocityScale * particleScale;
 			vec3 particleFinalPos = particleRelRightPos + particleRelUpPos + particleLocalPositionFinal;
 			
 			//
@@ -549,7 +570,7 @@
 					#endif
 				#elif defined(_VAT3MODE_PARTICLES)// particles
 					#if !defined(NO_VAT_NORMAL)
-						outNormal = normalize( ( nonTexInputs.transposeModelViewMatrix * vec4(0.0f, 0.0f, 1.0f,0.0f) ).xyz);
+						outNormal = normalize( ( nonTexInputs.viewToModelMatrix * vec4(0.0f, 0.0f, 1.0f,0.0f) ).xyz);
 						#if !defined(NO_VAT_TANGENT)
 							outTangent = nonTexInputs.supportSurfaceNormalMaps ? particleRightDir :  vec3(0.0f, 0.0f, 0.0f); 
 						#endif

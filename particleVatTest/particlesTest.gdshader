@@ -1,5 +1,5 @@
 shader_type spatial;
-//render_mode  cull_disabled;
+render_mode  cull_front;
 render_mode unshaded;
 //#define NO_VAT_NORMAL
 #define NO_VAT_TANGENT
@@ -19,13 +19,12 @@ void vertex()
 	Vat3_Vertex_Input vertInputs;
 	vertInputs.vertexPosition = VERTEX.xyz;
 
-	vertInputs.texCoord0 =UV;
+	vertInputs.texCoord0 =vec2(UV.x,  UV.y);
 	vertInputs.texCoord1 = UV2;
 
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
-	nonTexInputs.modelMatrix = MODEL_MATRIX;
-	nonTexInputs.viewMatrix = VIEW_MATRIX;
-	nonTexInputs.transposeModelViewMatrix = transpose(MODEL_MATRIX * VIEW_MATRIX);
+	nonTexInputs.modelViewMatrix = MODELVIEW_MATRIX;
+	nonTexInputs.viewToModelMatrix =  inverse(MODELVIEW_MATRIX);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
 	NORMAL = vatOutputs.outNormal.xyz;

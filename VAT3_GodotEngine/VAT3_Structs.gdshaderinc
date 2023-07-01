@@ -32,9 +32,8 @@ struct Vat3_NonTexInputs {
         float stretchByVelocityAmount;
         bool animateFirstFrame;
     #elif defined(_VAT3MODE_PARTICLES)
-		mat4 modelMatrix;
-		mat4 viewMatrix;
-		mat4 transposeModelViewMatrix;
+		mat4 modelViewMatrix;
+		mat4 viewToModelMatrix;
         float particleSpinPhase;
         float perParticleRandomVelocityScale;
         float perParticleRandomSpinSpeed;
