@@ -137,11 +137,11 @@
 		#elif defined(_VAT3MODE_RIGIDBODY)
 			nonTexInputs.stretchByVelocity = _stretchByVel;
 			nonTexInputs.stretchByVelocityAmount = _stretchByVelAmount;
-			nonTexInputs.animateFirstFrame = _animateFirstFrame ;
+			nonTexInputs.animateFirstFrame = _animateFirstFrame;
 		#elif defined(_VAT3MODE_PARTICLES)
 			nonTexInputs.computeSpinfromHeadingVector = _spinFromHeading;
 			nonTexInputs.originEffectiveRadius = _originRadius;
-			nonTexInputs.hideParticlesOverlappingObjectOrigin =_hideOverlappingOrigin;
+			nonTexInputs.hideParticlesOverlappingObjectOrigin = _hideOverlappingOrigin;
 			nonTexInputs.scalebyVelocityAmount = _scaleByVelAmount;
 			nonTexInputs.particleHeightBaseScale = _heightBaseScale;
 			nonTexInputs.particleWidthBaseScale = _widthBaseScale;
@@ -160,7 +160,7 @@
 		Vat3_NonTexInputs defaultNonTexInputs;
 		GetVatInputsFromMatProps(defaultNonTexInputs);
 		defaultNonTexInputs.additionalObjectSpaceOffset = vec3(0.0f, 0.0f, 0.0f);
-		defaultNonTexInputs.inputTime= TIME;
+		defaultNonTexInputs.inputTime = TIME;
 		#if defined(_VAT3MODE_PARTICLES)
 			defaultNonTexInputs.particleSpinPhase = TIME;
 			float VatRandomFloat = VatRandomFloat(vertInput.texCoord1);
@@ -171,4 +171,4 @@
 		return defaultNonTexInputs;
 	}
 	
-#endif
+#endif /*VAT3_DEFAULT_HLSL*/
