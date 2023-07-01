@@ -134,14 +134,14 @@
 	
 
 		#if defined(_VAT3MODE_DYNAMICMESH) 
-			float lookupTableMaxRange = nonTexInputs.isLookuptexHdr ? 2048.0f : 255.0f; // it is max range for texure
-			vec4 lookupTableThisFrame = textureLod( vatLookupTex,relativeThisFrameUv,0);
-			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv,0);
+			float lookupTableMaxRange = nonTexInputs.isLookuptexHdr ? 2048.0f : 255.0f; // it is max range for texture
+			vec4 lookupTableThisFrame = textureLod(vatLookupTex, relativeThisFrameUv, 0.0);
+			vec4 lookupTableNextFrame = textureLod(vatLookupTex, relativeNextFrameUv, 0.0);
 			
 			vec2 dynameshThisFrameUv = vec2(lookupTableThisFrame.x + lookupTableThisFrame.y/lookupTableMaxRange, (lookupTableThisFrame.z + lookupTableThisFrame.w/lookupTableMaxRange));
 			vec2 dynameshThisNextUv = vec2(lookupTableNextFrame.x + lookupTableNextFrame.y/lookupTableMaxRange, (lookupTableNextFrame.z + lookupTableNextFrame.w/lookupTableMaxRange));
 
-			vec2 thisFrameUv  = dynameshThisFrameUv;
+			vec2 thisFrameUv = dynameshThisFrameUv;
 			vec2 nextFrameUv = dynameshThisNextUv;
 			
 		#else
