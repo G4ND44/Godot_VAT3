@@ -17,7 +17,6 @@ void vertex()
 	vertInputs.vertexPosition = VERTEX.xyz;
 	vertInputs.vertexNormal = NORMAL;
 	vertInputs.vertexTangent = TANGENT;
-		vec4 vertColors = COLOR;
 	vertInputs.texCoord0 =UV;
 	vertInputs.texCoord1 = UV2;
 	//vertInputs.texCoord2 = CUSTOM0.xy;

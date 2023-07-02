@@ -8,12 +8,14 @@ struct Vat3_NonTexInputs {
     float displayFrame;
     float playbackSpeed;
     float HoudiniFPS;
-    bool interframeInterpolation;
+	#ifndef NO_LERPING
+    	bool interframeInterpolation;
+	#endif
     float frameCount;
-   	#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
+   	#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES)) && !defined(NO_LERPING)
         bool interpolateColor;
     #endif
-    #if defined(VAT_LOAD_SPARE_COL_TEX)
+    #if defined(VAT_LOAD_SPARE_COL_TEX) && !defined(NO_LERPING)
         bool interpolateSpareColor;
     #endif
 	#ifndef NO_VAT_NORMAL

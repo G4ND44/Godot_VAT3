@@ -65,9 +65,9 @@ surface_material_override/0 = ExtResource("7_88glp")
 script = ExtResource("3_k5hr2")
 
 [node name="particles_simulation_mesh_100F" parent="." instance=ExtResource("10_erqmm")]
+transform = Transform3D(-0.987884, 0.155193, 0, -0.0524933, -0.334147, 0.941058, 0.146046, 0.929656, 0.338245, 14.4815, 0, -90.0996)
 
 [node name="Mesh2" parent="particles_simulation_mesh_100F" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.2605, 0, -100.216)
 surface_material_override/0 = ExtResource("11_oln0i")
 script = ExtResource("3_k5hr2")
 

@@ -34,20 +34,25 @@
 	#if !defined(NO_VAT_TANGENT) && !defined(NO_VAT_NORMAL)
 		uniform bool _surfaceNormals;
 	#endif
-	
-	uniform bool _interpolate;
+	#ifndef NO_LERPING
+		uniform bool _interpolate;
+	#endif
 	uniform float _gameTimeAtFirstFrame;
 	uniform float _playbackSpeed;
 	uniform float _displayFrame;
 	uniform bool _autoPlayback;
 	
-	#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
-		uniform bool _interpolateCol;
+	#if defined(VAT_LOAD_COL_TEX) ||  ((defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))) 
+		#if !defined(NO_LERPING) && defined(VAT_LOAD_COL_TEX)
+			uniform bool _interpolateCol;
+		#endif
    		uniform sampler2D vatColTex : filter_nearest, repeat_disable;
    	#endif
 
 	#if defined(VAT_LOAD_SPARE_COL_TEX)
-		uniform bool _interpolateSpareCol;
+		#ifndef NO_LERPING
+			uniform bool _interpolateSpareCol;
+		#endif
         uniform sampler2D vatSpareColTex : filter_nearest, repeat_disable;
     #endif
 	uniform sampler2D vatPosTex : hint_normal, filter_nearest,repeat_disable;
@@ -77,12 +82,13 @@
 
 		nonTexInputs.HoudiniFPS = _houdiniFPS;
 		nonTexInputs.frameCount = _frameCount;
-		
-		nonTexInputs.interframeInterpolation = _interpolate;
-		#if defined(VAT_LOAD_COL_TEX)
+		#ifndef NO_LERPING
+			nonTexInputs.interframeInterpolation = _interpolate;
+		#endif
+		#if defined(VAT_LOAD_COL_TEX) && !defined(NO_LERPING)
 	        nonTexInputs.interpolateColor = _interpolateCol;
 	    #endif
-	    #if defined(VAT_LOAD_SPARE_COL_TEX)
+	    #if defined(VAT_LOAD_SPARE_COL_TEX) && !defined(NO_LERPING)
 	        nonTexInputs.interpolateSpareColor = _interpolateSpareCol;
 	    #endif
 
@@ -116,12 +122,13 @@
 
 		nonTexInputs.HoudiniFPS = _houdiniFPS;
 		nonTexInputs.frameCount = _frameCount;
-		
-		nonTexInputs.interframeInterpolation = _interpolate;
-		#if defined(VAT_LOAD_COL_TEX)
+		#ifndef NO_LERPING
+			nonTexInputs.interframeInterpolation = _interpolate;
+		#endif
+		#if defined(VAT_LOAD_COL_TEX)  && !defined(NO_LERPING)
         	nonTexInputs.interpolateColor = _interpolateCol;
     	#endif
-	    #if defined(VAT_LOAD_SPARE_COL_TEX)
+	    #if defined(VAT_LOAD_SPARE_COL_TEX)  && !defined(NO_LERPING)
 	        nonTexInputs.interpolateSpareColor = _interpolateSpareCol;
 	    #endif
 		
