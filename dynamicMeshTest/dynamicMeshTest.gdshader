@@ -1,7 +1,7 @@
 shader_type spatial;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
-#define _VAT3MODE_DYNAMICMESH
+#define VAT3MODE_DYNAMICMESH
 #define VAT_LOAD_COL_TEX
 
 #include "res://VAT3_GodotEngine/VAT3_handler.gdshaderinc"

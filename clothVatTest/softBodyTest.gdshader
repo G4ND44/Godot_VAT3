@@ -2,8 +2,8 @@ shader_type spatial;
 render_mode  cull_disabled;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
-#define _VAT3MODE_SOFTBODY
-
+#define VAT3MODE_SOFTBODY
+uniform sampler2D normalmap : hint_normal;
 
 
 	
@@ -18,14 +18,17 @@ void vertex()
 	vertInputs.texCoord1 = UV2;
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
-   VERTEX = vatOutputs.outPosition.xyz;
+    VERTEX = vatOutputs.outPosition.xyz;
 	NORMAL = vatOutputs.outNormal.xyz ;
+	TANGENT = vatOutputs.outTangent;
+	BINORMAL = cross(TANGENT,NORMAL);
 
 	//UV = UV2;
 	//COLOR = vatOutputs.outColorAndAlpha.xyz;
 }
 
 void fragment() {
-	//ALBEDO = vec3(UV2.x, UV2.y, 0.0);
+	NORMAL_MAP = texture(normalmap, UV).rgb;
+	ALBEDO = vec3(0.2,0.7,1.0);
 	// Place fragment code here.
 }

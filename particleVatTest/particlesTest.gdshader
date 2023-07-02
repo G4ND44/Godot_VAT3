@@ -1,11 +1,12 @@
 shader_type spatial;
-render_mode  cull_front;
-render_mode unshaded;
+render_mode  cull_back;
+//render_mode unshaded;
 //#define NO_VAT_NORMAL
-#define NO_VAT_TANGENT
-#define _VAT3MODE_PARTICLES
+//#define NO_VAT_TANGENT
+#define VAT3MODE_PARTICLES
 #define VAT_LOAD_COL_TEX
 #define VAT_CAN_SPIN
+uniform sampler2D normalmap : hint_normal;
 
 
 
@@ -28,13 +29,16 @@ void vertex()
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
 	NORMAL = vatOutputs.outNormal.xyz;
-	//TANGENT = vatOutputs.outTangent;
+	TANGENT = vatOutputs.outTangent;
+	BINORMAL = cross(TANGENT,NORMAL);
 	COLOR = vatOutputs.outColorAndAlpha;
+	//COLOR.xyz = NORMAL;
 }
 
 void fragment() {
 //vec2 test = UV;
-	ALBEDO = COLOR.xyz;
+	NORMAL_MAP = texture(normalmap, UV).rgb;
+	ALBEDO = (COLOR.xyx);
 	ALPHA = COLOR.w;
 	// Place fragment code here.
 }

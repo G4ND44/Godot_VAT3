@@ -10,7 +10,7 @@ struct Vat3_NonTexInputs {
     float HoudiniFPS;
     bool interframeInterpolation;
     float frameCount;
-   	#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
+   	#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
         bool interpolateColor;
     #endif
     #if defined(VAT_LOAD_SPARE_COL_TEX)
@@ -24,14 +24,14 @@ struct Vat3_NonTexInputs {
     float inputTime;
     vec3 additionalObjectSpaceOffset;
 
-    #if defined(_VAT3MODE_DYNAMICMESH)
+    #if defined(VAT3MODE_DYNAMICMESH)
         bool surfaceUVsfromColorRG;
 		bool isLookuptexHdr;
-    #elif defined(_VAT3MODE_RIGIDBODY)
+    #elif defined(VAT3MODE_RIGIDBODY)
         bool stretchByVelocity;
         float stretchByVelocityAmount;
         bool animateFirstFrame;
-    #elif defined(_VAT3MODE_PARTICLES)
+    #elif defined(VAT3MODE_PARTICLES)
 		mat4 modelViewMatrix;
 		mat4 viewToModelMatrix;
         float particleSpinPhase;
@@ -47,7 +47,7 @@ struct Vat3_NonTexInputs {
         float particleTextureUScale;
         float particleTextureVScale;
     #endif
-    #if defined(_VAT3MODE_RIGIDBODY) || defined(_VAT3MODE_PARTICLES)
+    #if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES)
         bool particlesPiecesScaleAreInPositionAlpha;
         float globalParticlePiecesPcaleMultiplier;
     #endif
@@ -67,7 +67,7 @@ struct Vat3_Outputs {
     #if defined(VAT_LOAD_SPARE_COL_TEX)
         vec4 outSpareColorAndAlpha;
     #endif
-    #if defined(_VAT_OUTPUT_FULL)
+    #if defined(VAT_OUTPUT_FULL)
         float samplingVThisFrame;
         float samplingVNextFrame;
         float dataInPositionAlphaThisFrame;
@@ -86,11 +86,11 @@ struct Vat3_Outputs {
         float outAnimationProgressNextFrame;
         vec3 outPointLocalPositionThisFrame;
         vec3 outPointLocalPositionNextFrame;
-        #if defined(_VAT3MODE_RIGIDBODY)
+        #if defined(VAT3MODE_RIGIDBODY)
             vec3 outPieceLocalPositionFinal;
             vec3 outPieceRestFrameLocalPosition;
         #endif
-        #if defined(_VAT3MODE_PARTICLES)
+        #if defined(VAT3MODE_PARTICLES)
             vec3 outParticleLocalPositionFinal;
         #endif
     #endif
@@ -99,10 +99,10 @@ struct Vat3_Outputs {
 struct Vat3_Vertex_Input {
     vec3 vertexPosition;
     vec2 texCoord0;
-    #if !defined(_VAT3MODE_DYNAMICMESH) 
+    #if !defined(VAT3MODE_DYNAMICMESH) 
         vec2 texCoord1;
     #endif
-    #if defined(_VAT3MODE_RIGIDBODY)
+    #if defined(VAT3MODE_RIGIDBODY)
         vec2 texCoord2;
         vec2 texCoord3;
         #if !defined(NO_VAT_NORMAL)
@@ -115,9 +115,11 @@ struct Vat3_Vertex_Input {
 };
 
 
-#define defaultColor vec4(0.8f, 0.8f, 0.8f, 1.0f);
-float VatRandomFloat(vec2 seed)
-{
-	return fract(sin(dot(seed, vec2(12.9898, 78.233)))*43758.5453);
-}
+#define defaultColor vec4(0.8f, 0.8f, 0.8f, 1.0f)
+	#if defined(VAT3MODE_PARTICLES)
+	float VatRandomFloat(vec2 seed)
+	{
+		return fract(sin(dot(seed, vec2(12.9898, 78.233)))*43758.5453);
+	}
+	#endif
 #endif /*VAT3_STRUCTS*/

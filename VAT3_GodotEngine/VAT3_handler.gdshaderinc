@@ -3,45 +3,56 @@
 #define VAT3_HANDLER
 	#include "VAT3_Structs.gdshaderinc"
 	#include "VAT3_Inputs.gdshaderinc"
-	
-	float fmod(float a, float b)
-	{
-	  float c = fract(abs(a/b))*abs(b);
-	  return (a < 0.0f) ? -c : c;   /* if ( a < 0 ) c = 0-c */
-	}
-	
-	vec3 SafeNormalize(vec3 vec)
-	{
-	    float dp3 = max(6.103515625e-5 , dot(vec, vec));
-	    return vec * inversesqrt(dp3);
-	}
-	
+
+#if defined(VAT3MODE_RIGIDBODY)
 	vec3 Interframe_Position(vec3 V, vec3 A, vec3 P, float T)
 	{
 		return  (V * T + 0.5 * A * T * T + P);
 	}
+#endif
+#if !defined(VAT3MODE_PARTICLES) &&  !defined(NO_VAT_NORMAL)
+	#if !defined(VAT_USE_COMPRESSED_NORMALS)
+		#if defined(NO_VAT_TANGENT)
+			void DecodeRotationTextureNoTangent(vec4 rotTexData,out vec3 normals, vec3 normalDefaults)
+			{
+				vec3 crossNormal = cross(rotTexData.rgb, normalDefaults.xyz);
+				vec3 normalLengMul = rotTexData.aaa * normalDefaults.xyz;
+				vec3 normalToUnpack = cross(rotTexData.rgb,normalLengMul + crossNormal);
+				normals = normalToUnpack * 2.0 + normalDefaults;
 
-	void DecodeRotationTextureNoTangent(vec4 rotTexData,out vec3 normals, vec3 normalDefaults)
-	{
-		vec3 crossNormal = cross(rotTexData.rgb, normalDefaults.xyz);
-		vec3 normalLengMul = rotTexData.aaa * normalDefaults.xyz;
-		vec3 normalToUnpack = cross(rotTexData.rgb,normalLengMul + crossNormal);
-		normals = normalToUnpack * 2.0 + normalDefaults;
+			}
+		#else
+			void DecodeRotationTexture(vec4 rotTexData,out vec3 normal, out vec3 tangent, vec3 normalDefaults, vec3 tangentDefaults)
+			{
+				vec3 crossNormal = cross(rotTexData.rgb, normalDefaults.xyz);
+				vec3 normalLengMul = rotTexData.aaa * normalDefaults.xyz;
+				vec3 normalToUnpack = cross(rotTexData.rgb,normalLengMul + crossNormal);
+				normal = normalToUnpack * 2.0f + normalDefaults;
 
-	}
-	void DecodeRotationTexture(vec4 rotTexData,out vec3 normal, out vec3 tangent, vec3 normalDefaults, vec3 tangentDefaults)
-	{
-		vec3 crossNormal = cross(rotTexData.rgb, normalDefaults.xyz);
-		vec3 normalLengMul = rotTexData.aaa * normalDefaults.xyz;
-		vec3 normalToUnpack = cross(rotTexData.rgb,normalLengMul + crossNormal);
-		normal = normalToUnpack * 2.0f + normalDefaults;
+				vec3 crossTangent = cross(rotTexData.rgb, tangentDefaults.xyz);
+				vec3 tangentLengMul = rotTexData.aaa * tangentDefaults.xyz;
+				vec3 tangentToUnpack = cross(rotTexData.rgb,tangentLengMul + crossTangent);
+				tangent = tangentToUnpack * 2.0f + tangentDefaults;
+			}
+		#endif
+	#else
+		vec3 RecoverCompressedNormal(float normalInAlpha)
+		{
+			float highRange = normalInAlpha * 1024.0;
+			float lowRange = floor(normalInAlpha * 32.0);
+			
+			vec2 angleToUnpack = vec2(lowRange/31.5, (highRange - (lowRange * 32.0f))/31.5);
+			vec2 unpackedAngle = angleToUnpack * 4.0f - vec2(2.0f, 2.0f);
+			float dotSquare = dot(unpackedAngle,unpackedAngle);
+			float dotSquareRemaped = sqrt(1.0f - (dotSquare*0.25f)); // instead of divide /4
+			vec2 normalXZ = dotSquareRemaped * unpackedAngle;
+			vec3 unclampedNormal = vec3(normalXZ.x, 1.0f - (dotSquare * 0.5f), normalXZ.y); // instead of /2
+			return clamp(unclampedNormal, vec3(-1.0f, -1.0f,-1.0f), vec3(1.0f, 1.0f, 1.0f));
+		}
+	#endif
+#endif 
 
-		vec3 crossTangent = cross(rotTexData.rgb, tangentDefaults.xyz);
-		vec3 tangentLengMul = rotTexData.aaa * tangentDefaults.xyz;
-		vec3 tangentToUnpack = cross(rotTexData.rgb,tangentLengMul + crossTangent);
-		tangent = tangentToUnpack * 2.0f + tangentDefaults;
-	}
-        
+#if defined(VAT3MODE_RIGIDBODY)
     vec4 Decode_Quaterion(vec3 XYZ, int maxComponent)
     {
         float w = sqrt(1.0 - dot(XYZ,XYZ));
@@ -77,19 +88,8 @@
 		vec4 lerpedQuaterion = (rpfQuaterionThisFrame + rpfQuaterionNextFrame)/sinRpf;
 		return normalize(lerpedQuaterion);
 	}
-	vec3 RecoverCompressedNormal(float normalInAlpha)
-	{
-		float highRange = normalInAlpha * 1024.0;
-		float lowRange = floor(normalInAlpha * 32.0);
-		
-		vec2 angleToUnpack = vec2(lowRange/31.5, (highRange - (lowRange * 32.0f))/31.5);
-		vec2 unpackedAngle = angleToUnpack * 4.0f - vec2(2.0f, 2.0f);
-		float dotSquare = dot(unpackedAngle,unpackedAngle);
-		float dotSquareRemaped = sqrt(1.0f - (dotSquare*0.25f)); // instead of divide /4
-		vec2 normalXZ = dotSquareRemaped * unpackedAngle;
-		vec3 unclampedNormal = vec3(normalXZ.x, 1.0f - (dotSquare * 0.5f), normalXZ.y); // instead of /2
-		return clamp(unclampedNormal, vec3(-1.0f, -1.0f,-1.0f), vec3(1.0f, 1.0f, 1.0f));
-	}
+#endif
+
 
 
 
@@ -103,13 +103,15 @@
 		vec3 inputBoundsRange =  nonTexInputs.boundMax -  nonTexInputs.boundMin;
 
 		float activePixelsRatioX = 1.0f - (ceil(boundMin.z) - boundMin.z);
-		float activePixelsRatioY = 1.0f -(ceil(boundMin.x) - boundMin.x);
+		float activePixelsRatioY = 1.0f -(ceil(boundMax.x) - boundMax.x);
 
 		bool isTexHdr = nonTexInputs.isTexHdr;
-		float maxDataPscale = 1.0f / (1.0f - fract(boundMax.y));
+		#if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES) 
+			float maxDataPscale = 1.0f / (1.0f - fract(boundMax.y));
+		#endif
 
 
-		#if defined(_VAT3MODE_DYNAMICMESH) || defined(_VAT3MODE_RIGIDBODY)
+		#if defined(VAT3MODE_DYNAMICMESH) || defined(VAT3MODE_RIGIDBODY)
 			float reverseBoundXFract = fract(boundMin.x * (-1.0f));
 		#endif
 		// Decode Basic Data  #END#
@@ -122,8 +124,8 @@
 		float currentFramePlusOne = nonTexInputs.autoPlayback ? floor(loopedAnimFrame + 1.0f) : floor(nonTexInputs.displayFrame);
 		float interpolationAlpha = fract(currentFrame);
 		float frameCountInverse = (1.0f/ nonTexInputs.frameCount);
-		float animProgressThisFrame = fmod( currentFramePlusOne - 1.0f, nonTexInputs.frameCount) * frameCountInverse;
-		float animProgressNextFrame = fmod(currentFramePlusOne, nonTexInputs.frameCount) * frameCountInverse;
+		float animProgressThisFrame = mod( currentFramePlusOne - 1.0f, nonTexInputs.frameCount) * frameCountInverse;
+		float animProgressNextFrame = mod(currentFramePlusOne, nonTexInputs.frameCount) * frameCountInverse;
 		//float animProgressThisFrame = currentFramePlusOne - 1.0f < 0.0 ? nonTexInputs.frameCount - currentFramePlusOne : currentFramePlusOne - 1.0f;
 		//float animProgressNextFrame = currentFramePlusOne > nonTexInputs.frameCount ? currentFramePlusOne - nonTexInputs.frameCount : currentFramePlusOne;
 		//animProgressThisFrame*=frameCountInverse;
@@ -131,12 +133,12 @@
 		// Time calculations  #END#
 
 		// Frames UVs #START#
-		#if defined(_VAT3MODE_DYNAMICMESH) 
+		#if defined(VAT3MODE_DYNAMICMESH) 
 			vec2 samplingInputUvs = vertInput.texCoord0;
 		#else
 			vec2 samplingInputUvs = vertInput.texCoord1;
 		#endif
-		#ifndef _VAT3MODE_DYNAMICMESH
+		#ifndef VAT3MODE_DYNAMICMESH
 			float scaledU = (samplingInputUvs.x) * activePixelsRatioX;
 			float scaledV = (samplingInputUvs.y) * activePixelsRatioY ;
 			float samplingVThisFrame = scaledV + animProgressThisFrame * activePixelsRatioY;
@@ -149,7 +151,7 @@
 		#endif
 	
 
-		#if defined(_VAT3MODE_DYNAMICMESH) 
+		#if defined(VAT3MODE_DYNAMICMESH) 
 			float lookupTableMaxRange = nonTexInputs.isLookuptexHdr ? 2048.0f : 255.0f; // it is max range for texure
 			vec4 lookupTableThisFrame = textureLod( vatLookupTex,relativeThisFrameUv,0);
 			vec4 lookupTableNextFrame = textureLod( vatLookupTex,relativeNextFrameUv,0);
@@ -164,7 +166,7 @@
 			vec2 thisFrameUv = relativeThisFrameUv;
 			vec2 nextFrameUv = relativeNextFrameUv;
 		#endif
-		#if defined(_VAT3MODE_RIGIDBODY) 
+		#if defined(VAT3MODE_RIGIDBODY) 
 			float animProgressLastFrame = mod(currentFramePlusOne -2.0f, nonTexInputs.frameCount) * frameCountInverse;
 			float samplingLastFrame =  scaledV + animProgressLastFrame * activePixelsRatioY;
 			vec2 lastFrameUV =  vec2(scaledU,  samplingLastFrame);
@@ -173,7 +175,7 @@
 
 		// Sample Color Textures #START#
 		// Base Color Tex
-		#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
+		#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
 			vec4 outColorRgbaThisFrame = textureLod( vatColTex, thisFrameUv,0);
 			vec4 outColorRgbaNextFrame = textureLod( vatColTex, nextFrameUv,0);
 			vec4 interpolatedColorAndAlpha;
@@ -182,7 +184,7 @@
 				interpolatedColorAndAlpha = mix(outColorRgbaThisFrame, outColorRgbaNextFrame, interpolationAlpha);
 			}else
 				interpolatedColorAndAlpha = outColorRgbaThisFrame;
-		#else
+		#elif defined(VAT_OUTPUT_FULL)
 			vec4 outColorRgbaThisFrame = defaultColor;
 			vec4 outColorRgbaNextFrame = defaultColor;
 			vec4 interpolatedColorAndAlpha = defaultColor;
@@ -199,11 +201,10 @@
 				spareColorRGBA = defaultColor;
 		#endif
 		// Sample Color Textures #END#
-		vec2 texSize = vec2(textureSize(vatPosTex,0));
 		// This frame, next and lerped position #START#
 		vec4 posTexThisFrame = textureLod( vatPosTex, thisFrameUv,0);
 		vec4 posTexNextFrame = textureLod( vatPosTex, nextFrameUv,0);
-		#if defined(_VAT3MODE_SOFTBODY) || defined(_VAT3MODE_RIGIDBODY)
+		#if defined(VAT3MODE_SOFTBODY) || defined(VAT3MODE_RIGIDBODY)
 			if(isTexHdr)
 			{
 				posTexThisFrame.xyz*= 0.01f;
@@ -215,9 +216,11 @@
 		//posTexNextFrame.rgb *=0.5; 
 		//posTexThisFrame.rgb *= sqrt(posTexThisFrame.rgb);
 		//posTexNextFrame.rgb *= sqrt(posTexNextFrame.rgb);
-		float posAlphaThisFrame = posTexThisFrame.a;
-		float posAlphaNextFrame = posTexNextFrame.a;
-		#if defined(_VAT3MODE_RIGIDBODY)
+		#if !defined(VAT3MODE_SOFTBODY) && !defined(VAT_OUTPUT_FULL)
+			float posAlphaThisFrame = posTexThisFrame.a;
+			float posAlphaNextFrame = posTexNextFrame.a;
+		#endif
+		#if defined(VAT3MODE_RIGIDBODY)
 			float posAlphaThisFrameMul4 = posAlphaThisFrame * 4.0f;
 			float posAlphaNextFrameMul4 = posAlphaNextFrame * 4.0f;
 		#endif
@@ -249,7 +252,7 @@
 		}
 		vec3 thisFramePos = thisFramePosSampleSum;
 		vec3 nextFramePos = nextFramePosSampleSum;
-		#if defined(_VAT3MODE_PARTICLES) 
+		#if defined(VAT3MODE_PARTICLES) 
 			float particleEnabledThisFrame = clamp(sign(length(thisFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
 			float particleEnabledNextFrame = clamp(sign(length(nextFramePos) - nonTexInputs.originEffectiveRadius),0.0, 1.0);
 			vec3 lerpPos2Frames = mix(thisFramePos,nextFramePos, interpolationAlpha);
@@ -261,8 +264,8 @@
 		// This frame, next and lerped position  #END#
 
 		// pscale #START#
-		#if defined(_VAT3MODE_RIGIDBODY) || defined(_VAT3MODE_PARTICLES) 
-			#if defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES) 
+			#if defined(VAT3MODE_PARTICLES)
 				float clampedPscaleThisFrame = posAlphaThisFrame;
 				float clampedPscaleNextFrame = posAlphaNextFrame;
 			#else
@@ -270,7 +273,7 @@
 				float clampedPscaleNextFrame = 1.0f - fract(posAlphaNextFrameMul4);
 			#endif
 			float posAlphaInterpolated = mix(clampedPscaleThisFrame,clampedPscaleNextFrame,interpolationAlpha );
-			#if defined(_VAT_OUTPUT_FULL)
+			#if defined(VAT_OUTPUT_FULL)
 				float pscaleThisFrame = clampedPscaleThisFrame * maxDataPscale;
 				float pscaleNextFrame = clampedPscaleNextFrame * maxDataPscale;
 				float originalPscale;
@@ -289,8 +292,8 @@
 		#endif
 		// pscale #END#
 		// Decode compressed normals #START#
-		#if (!defined(NO_VAT_NORMAL) && !defined(_VAT3MODE_PARTICLES)) || defined(_VAT3MODE_RIGIDBODY)
-			#if (defined(_VAT3MODE_DYNAMICMESH) || defined(_VAT3MODE_SOFTBODY)) && defined(VAT_USE_COMPRESSED_NORMALS)
+		#if (!defined(NO_VAT_NORMAL) && !defined(VAT3MODE_PARTICLES)) || defined(VAT3MODE_RIGIDBODY)
+			#if (defined(VAT3MODE_DYNAMICMESH) || defined(VAT3MODE_SOFTBODY)) && defined(VAT_USE_COMPRESSED_NORMALS)
 					vec3 recoverComprNormal;
 					if(nonTexInputs.interframeInterpolation)
 						recoverComprNormal = normalize(mix(RecoverCompressedNormal(posAlphaThisFrame), RecoverCompressedNormal(posAlphaNextFrame), interpolationAlpha)).xyz;
@@ -319,7 +322,7 @@
 		// Sample Rotation Textures #END#
 
 
-		#if defined(_VAT3MODE_RIGIDBODY)
+		#if defined(VAT3MODE_RIGIDBODY)
 			// Object Space Acceleration #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
 				vec3 objectSpaceAcceleration = vec3(outColorRgbaThisFrame.x * (-1.0f),outColorRgbaThisFrame.y, outColorRgbaThisFrame.z);
@@ -351,7 +354,7 @@
 			// Quaterion #END#
 		#endif
 
-		#if defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_PARTICLES)
 
 			// Particle Velocity and Vector #START#
 			#if defined(VAT_VIEWXY_SOURCE_COLOR_RGB)
@@ -427,7 +430,7 @@
 					viewRightVector = vec3(sin(particleSpin), cos(particleSpin), 0.0f);
 				}
 				vec3 particleRightDir = normalize( nonTexInputs.viewToModelMatrix * vec4(viewRightVector.x, viewRightVector.y, viewRightVector.z, 0.0f) ).xyz; // view to object
-				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, -1.0f));
+				vec3 particleUpDirView = cross(viewRightVector,vec3(0.0f, 0.0f, 1.0f));
 				vec3 particleUpDir = (  nonTexInputs.viewToModelMatrix * vec4(particleUpDirView.x, particleUpDirView.y, particleUpDirView.z, 0.0f)).xyz;
 			#else
 				vec3 particleRightDir = normalize(  nonTexInputs.viewToModelMatrix * vec4(-1.0f, 0.0f, 0.0f,0.0f)).xyz;
@@ -444,7 +447,7 @@
 
 		#endif
 			
-		#if defined(_VAT3MODE_RIGIDBODY)
+		#if defined(VAT3MODE_RIGIDBODY)
 			//Rigidbody pos offset #START#
 			#if defined(VAT_SMOOTH_TRAJECTORIES)
 				vec4 posTexLastFrame =  textureLod( vatPosTex,lastFrameUV,0);
@@ -480,16 +483,16 @@
 		#endif
 
 		// out Pos #START#
-		#if defined(_VAT3MODE_RIGIDBODY)
+		#if defined(VAT3MODE_RIGIDBODY)
 			vec3 vertexObjectPos = rigidBodyPosPlusOffset;
 
 		#else
-			#if defined(_VAT3MODE_SOFTBODY)
+			#if defined(VAT3MODE_SOFTBODY)
 				vec3 offset = vertInput.vertexPosition + nonTexInputs.additionalObjectSpaceOffset;
 				vec3 relPos = lerpedPos;
 			#else
 				vec3 offset =  nonTexInputs.additionalObjectSpaceOffset;
-				#if defined(_VAT3MODE_PARTICLES)
+				#if defined(VAT3MODE_PARTICLES)
 					vec3 relPos = particleFinalPos;
 				#else // then it is dynamic mesh
 					vec3 relPos = thisFramePos;
@@ -509,7 +512,7 @@
 			#if !defined(NO_VAT_TANGENT)
 				vec3 outTangent;
 			#endif
-			#if defined(_VAT3MODE_RIGIDBODY)
+			#if defined(VAT3MODE_RIGIDBODY)
 				#if !defined(NO_VAT_TANGENT)
 					DecodeRotationTexture(lerpedQuaterion,outNormal,outTangent,vertInput.vertexNormal, vertInput.vertexTangent); 
 				#else
@@ -521,7 +524,7 @@
 				#endif
 
 			#else
-				#if defined(_VAT3MODE_SOFTBODY) || defined(_VAT3MODE_DYNAMICMESH)
+				#if defined(VAT3MODE_SOFTBODY) || defined(VAT3MODE_DYNAMICMESH)
 					#if !defined(VAT_USE_COMPRESSED_NORMALS)
 						vec3 decodedNormalThisFrame;
 
@@ -531,7 +534,7 @@
 						#else
 							DecodeRotationTextureNoTangent(rotThisFrameToDecode,decodedNormalThisFrame,normalDefault);
 						#endif
-						#if defined(_VAT3MODE_SOFTBODY)
+						#if defined(VAT3MODE_SOFTBODY)
 							if(nonTexInputs.interframeInterpolation)
 							{
 								vec3 decodedNormalNextFrame;
@@ -568,7 +571,7 @@
 							outTangent = vec3(0.0f, 0.0f, 0.0f); // not valid
 						#endif
 					#endif
-				#elif defined(_VAT3MODE_PARTICLES)// particles
+				#elif defined(VAT3MODE_PARTICLES)// particles
 					#if !defined(NO_VAT_NORMAL)
 						outNormal = normalize( ( nonTexInputs.viewToModelMatrix * vec4(0.0f, 0.0f, 1.0f,0.0f) ).xyz);
 						#if !defined(NO_VAT_TANGENT)
@@ -590,11 +593,11 @@
 		#endif
 
 		// out SurfaceUV #START#
-		#if defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_PARTICLES)
 			vec2 particleUvScale= vec2( nonTexInputs.particleTextureUScale, nonTexInputs.particleTextureVScale );
 			vec2 particleUvScaleRemaped = particleUvScale * (-0.5f) + vec2(0.5f, 0.5f);
 			vec2 surfaceUv = particleUvScaleRemaped + vertInput.texCoord0 * particleUvScale;
-		#elif defined(_VAT3MODE_DYNAMICMESH)
+		#elif defined(VAT3MODE_DYNAMICMESH)
 			vec2 surfaceUv;
 			if(nonTexInputs.surfaceUVsfromColorRG)
 			{
@@ -623,10 +626,10 @@
 		#if defined(VAT_LOAD_SPARE_COL_TEX)
 			vertOutputs.outSpareColorAndAlpha = spareColorRGBA;
 		#endif
-        #if defined(_VAT_OUTPUT_FULL)
+        #if defined(VAT_OUTPUT_FULL)
 			vertOutputs.samplingVThisFrame = samplingVThisFrame;
 			vertOutputs.samplingVNextFrame = samplingVNextFrame;
-			#if defined(_VAT3MODE_RIGIDBODY)
+			#if defined(VAT3MODE_RIGIDBODY)
 				vertOutputs.dataInPositionAlphaThisFrame = pscaleThisFrame;
 				vertOutputs.dataInPositionAlphaNextFrame = pscaleNextFrame;
 			#else
@@ -649,15 +652,15 @@
 			vertOutputs.outAnimationProgressNextFrame = animProgressNextFrame;
 			vertOutputs.outPointLocalPositionThisFrame = thisFramePos;
 			vertOutputs.outPointLocalPositionNextFrame = nextFramePos;
-			#if defined(_VAT3MODE_SOFTBODY)
+			#if defined(VAT3MODE_SOFTBODY)
 				vertOutputs.outPointLocalPositionThisFrame += vertInput.vertexPosition;
 				vertOutputs.outPointLocalPositionNextFrame += vertInput.vertexPosition;
 			#endif
-			#if defined(_VAT3MODE_RIGIDBODY)
+			#if defined(VAT3MODE_RIGIDBODY)
 				vertOutputs.outPieceLocalPositionFinal = pieceLocalPositionFinal;
 				vertOutputs.outPieceRestFrameLocalPosition = pieceRestFrameLocalPosition;
 			#endif
-			#if defined(_VAT3MODE_PARTICLES)
+			#if defined(VAT3MODE_PARTICLES)
 				vertOutputs.outParticleLocalPositionFinal = particleLocalPositionFinal;
 			#endif
 		#endif

@@ -1,5 +1,5 @@
-#ifndef VAT3_DEFAULT_HLSL
-#define VAT3_DEFAULT_HLSL
+#ifndef VAT3_DEFAULT_GLSL
+#define VAT3_DEFAULT_GLSL
 	#define normalDefault vec3(0.0f, 1.0f, 0.0f)
 	#define tangentDefault vec3(-1.0f, 0.0f, 0.0f)  
 	uniform bool _isTexHdr;
@@ -9,13 +9,13 @@
 
 	uniform float _houdiniFPS; //
 	
-	 #if defined(_VAT3MODE_DYNAMICMESH)
+	 #if defined(VAT3MODE_DYNAMICMESH)
         uniform bool _uvFromRG;
-    #elif defined(_VAT3MODE_RIGIDBODY)
+    #elif defined(VAT3MODE_RIGIDBODY)
         uniform bool _stretchByVel;
         uniform float _stretchByVelAmount;
        	uniform bool _animateFirstFrame;
-    #elif defined(_VAT3MODE_PARTICLES)
+    #elif defined(VAT3MODE_PARTICLES)
         uniform bool _spinFromHeading;
       	uniform float _originRadius;
         uniform bool _hideOverlappingOrigin;
@@ -25,7 +25,7 @@
 		uniform float _particleTexUScale;
 		uniform float _particleTexVScale;
     #endif
-    #if defined(_VAT3MODE_RIGIDBODY) || defined(_VAT3MODE_PARTICLES)
+    #if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES)
         	uniform bool _pscaleAreInPosA;
         	uniform float _globalPscaleMul;
     #endif
@@ -41,7 +41,7 @@
 	uniform float _displayFrame;
 	uniform bool _autoPlayback;
 	
-	#if defined(VAT_LOAD_COL_TEX) ||  (defined(_VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
+	#if defined(VAT_LOAD_COL_TEX) ||  (defined(VAT3MODE_RIGIDBODY) && defined(VAT_SMOOTH_TRAJECTORIES))
 		uniform bool _interpolateCol;
    		uniform sampler2D vatColTex : filter_nearest, repeat_disable;
    	#endif
@@ -56,10 +56,10 @@
 	#endif
 	
 
-	#if !defined(NO_VAT_NORMAL) && !defined(VAT_USE_COMPRESSED_NORMALS) && !defined(_VAT3MODE_PARTICLES)
+	#if !defined(NO_VAT_NORMAL) && !defined(VAT_USE_COMPRESSED_NORMALS) && !defined(VAT3MODE_PARTICLES)
     	uniform sampler2D vatRotTex : filter_nearest, repeat_disable;
 	#endif
-	#if defined(_VAT3MODE_DYNAMICMESH) 
+	#if defined(VAT3MODE_DYNAMICMESH) 
 		uniform bool _lookupTexIsHdr;
 		uniform sampler2D vatLookupTex : filter_nearest, repeat_disable;
 	#endif
@@ -68,7 +68,7 @@
 	{
 		nonTexInputs.autoPlayback = _autoPlayback;
 		nonTexInputs.gameTimeAtFirstFrame = _gameTimeAtFirstFrame;
-		#if defined(_VAT3MODE_DYNAMICMESH) 
+		#if defined(VAT3MODE_DYNAMICMESH) 
 			nonTexInputs.isLookuptexHdr = _lookupTexIsHdr;
 		#endif
 		
@@ -86,13 +86,13 @@
 	        nonTexInputs.interpolateSpareColor = _interpolateSpareCol;
 	    #endif
 
-		#if defined(_VAT3MODE_DYNAMICMESH)
+		#if defined(VAT3MODE_DYNAMICMESH)
 			nonTexInputs.surfaceUVsfromColorRG = _uvFromRG ;
-		#elif defined(_VAT3MODE_RIGIDBODY)
+		#elif defined(VAT3MODE_RIGIDBODY)
 			nonTexInputs.stretchByVelocity = _stretchByVel;
 			nonTexInputs.stretchByVelocityAmount = _stretchByVelAmount;
 			nonTexInputs.animateFirstFrame = _animateFirstFrame;
-		#elif defined(_VAT3MODE_PARTICLES)
+		#elif defined(VAT3MODE_PARTICLES)
 			nonTexInputs.computeSpinfromHeadingVector = _spinFromHeading;
 			nonTexInputs.originEffectiveRadius = _originRadius;
 			nonTexInputs.hideParticlesOverlappingObjectOrigin =_hideOverlappingOrigin;
@@ -103,7 +103,7 @@
 			nonTexInputs.particleTextureVScale = _particleTexVScale;
 		#endif
 
-		#if defined(_VAT3MODE_RIGIDBODY) || defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES)
 			nonTexInputs.particlesPiecesScaleAreInPositionAlpha = _pscaleAreInPosA;
 			nonTexInputs.globalParticlePiecesPcaleMultiplier = _globalPscaleMul; // also piece
 		#endif
@@ -132,13 +132,13 @@
 		nonTexInputs.boundMin = _boundMin;
 
 
-		#if defined(_VAT3MODE_DYNAMICMESH)
+		#if defined(VAT3MODE_DYNAMICMESH)
 			nonTexInputs.surfaceUVsfromColorRG = _uvFromRG;
-		#elif defined(_VAT3MODE_RIGIDBODY)
+		#elif defined(VAT3MODE_RIGIDBODY)
 			nonTexInputs.stretchByVelocity = _stretchByVel;
 			nonTexInputs.stretchByVelocityAmount = _stretchByVelAmount;
 			nonTexInputs.animateFirstFrame = _animateFirstFrame;
-		#elif defined(_VAT3MODE_PARTICLES)
+		#elif defined(VAT3MODE_PARTICLES)
 			nonTexInputs.computeSpinfromHeadingVector = _spinFromHeading;
 			nonTexInputs.originEffectiveRadius = _originRadius;
 			nonTexInputs.hideParticlesOverlappingObjectOrigin = _hideOverlappingOrigin;
@@ -149,7 +149,7 @@
 			nonTexInputs.particleTextureVScale = _particleTexVScale;
 		#endif
 
-		#if defined(_VAT3MODE_RIGIDBODY) || defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_RIGIDBODY) || defined(VAT3MODE_PARTICLES)
 			nonTexInputs.particlesPiecesScaleAreInPositionAlpha = _pscaleAreInPosA;
 			nonTexInputs.globalParticlePiecesPcaleMultiplier = _globalPscaleMul; // also piece
 		#endif
@@ -161,7 +161,7 @@
 		GetVatInputsFromMatProps(defaultNonTexInputs);
 		defaultNonTexInputs.additionalObjectSpaceOffset = vec3(0.0f, 0.0f, 0.0f);
 		defaultNonTexInputs.inputTime = TIME;
-		#if defined(_VAT3MODE_PARTICLES)
+		#if defined(VAT3MODE_PARTICLES)
 			defaultNonTexInputs.particleSpinPhase = TIME;
 			float VatRandomFloat = VatRandomFloat(vertInput.texCoord1);
 			defaultNonTexInputs.perParticleRandomVelocityScale = VatRandomFloat * 0.5f + 1.0f;
@@ -171,4 +171,4 @@
 		return defaultNonTexInputs;
 	}
 	
-#endif /*VAT3_DEFAULT_HLSL*/
+#endif /*VAT3_DEFAULT_GLSL*/

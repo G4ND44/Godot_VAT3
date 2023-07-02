@@ -2,7 +2,7 @@ shader_type spatial;
 //render_mode unshaded;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
-#define _VAT3MODE_RIGIDBODY
+#define VAT3MODE_RIGIDBODY
 #define VAT_SMOOTH_TRAJECTORIES
 
 
@@ -22,8 +22,8 @@ void vertex()
 	vertInputs.texCoord1 = UV2;
 	//vertInputs.texCoord2 = CUSTOM0.xy;
 
-	vertInputs.texCoord2 =vec2(CUSTOM0.x, CUSTOM0.y);
-	vertInputs.texCoord3 = vec2(CUSTOM0.z, CUSTOM0.w);
+	vertInputs.texCoord2 =CUSTOM0.xy;
+	vertInputs.texCoord3 = CUSTOM0.zw;
 	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
