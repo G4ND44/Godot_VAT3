@@ -25,7 +25,7 @@ void vertex()
 	vertInputs.texCoord0 =vec2(UV.x,  UV.y);
 	vertInputs.texCoord1 = UV2;
 
-	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
+	Vat3_NonTexInputs nonTexInputs = GetVat3Inputs(vertInputs);
 	nonTexInputs.modelViewMatrix = MODELVIEW_MATRIX;
 	nonTexInputs.viewToModelMatrix =  inverse(MODELVIEW_MATRIX);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);

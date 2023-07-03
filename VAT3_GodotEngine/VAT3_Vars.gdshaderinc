@@ -163,7 +163,7 @@
 		#endif
 
 	}
-	Vat3_NonTexInputs GetVat3DefualtInputs(Vat3_Vertex_Input vertInput)
+	Vat3_NonTexInputs GetVat3Inputs(Vat3_Vertex_Input vertInput)
 	{
 		Vat3_NonTexInputs defaultNonTexInputs;
 		GetVatInputsFromMatProps(defaultNonTexInputs);

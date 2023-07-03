@@ -24,7 +24,7 @@ void vertex()
 
 	vertInputs.texCoord2 =CUSTOM0.xy;
 	vertInputs.texCoord3 = CUSTOM0.zw;
-	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
+	Vat3_NonTexInputs nonTexInputs = GetVat3Inputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
     VERTEX = vatOutputs.outPosition.xyz;
 	NORMAL = vatOutputs.outNormal.xyz;

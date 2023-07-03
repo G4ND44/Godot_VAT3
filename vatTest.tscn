@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://dhdgtg3oqv5dd" path="res://rigidVatTest/geo/rigid_body_simulation_mesh_100F.gltf" id="2_0alca"]
 [ext_resource type="Material" uid="uid://xha7o7u1vl2h" path="res://rigidVatTest/rigidBodyTestMat.tres" id="3_hpjqd"]
-[ext_resource type="Script" path="res://scripts/vatSetUniforms.gd" id="3_k5hr2"]
 [ext_resource type="Material" uid="uid://dao6jbdg5yog" path="res://dynamicMeshTest/dynamicMeshTestMat.tres" id="4_rxvjw"]
+[ext_resource type="Script" path="res://VAT3_GodotEngine/scripts/vatSetUniforms.gd" id="5_qr00c"]
 [ext_resource type="PackedScene" uid="uid://dpyfq0d4apmfb" path="res://dynamicMeshTest/geo/fluidSimulation_mesh_100F.gltf" id="6_panr7"]
 [ext_resource type="PackedScene" uid="uid://wdep7rupvocc" path="res://clothVatTest/geo/Cloth_simumlation_mesh_100F.gltf" id="8_hcw6b"]
 [ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/softBodyTestMat.tres" id="9_hebor"]
@@ -47,7 +47,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.7257, 0, -85.4753)
 [node name="Mesh2" parent="fluidSimulation_mesh_100F" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.98587, 6.27979, -3.82005)
 surface_material_override/0 = ExtResource("4_rxvjw")
-script = ExtResource("3_k5hr2")
+script = ExtResource("5_qr00c")
 
 [node name="particles_simulation_mesh_100F" parent="." instance=ExtResource("10_erqmm")]
 transform = Transform3D(-0.987884, 0.155193, 0, -0.0524933, -0.334147, 0.941058, 0.146046, 0.929656, 0.338245, 14.4815, 0, -90.0996)
@@ -55,7 +55,7 @@ transform = Transform3D(-0.987884, 0.155193, 0, -0.0524933, -0.334147, 0.941058,
 [node name="Mesh2" parent="particles_simulation_mesh_100F" index="0"]
 transform = Transform3D(0.974, -1.19209e-07, 3.72529e-08, 1.04308e-07, 0.966, 2.98023e-07, -3.35276e-08, -4.76837e-07, 1, -21.2467, -1.46626, -1.93872)
 surface_material_override/0 = ExtResource("11_oln0i")
-script = ExtResource("3_k5hr2")
+script = ExtResource("5_qr00c")
 JSON_PATH = "res://particleVatTest/data/particles_simulation_data.json"
 VAT_axis_system = "Right-Handed Y-Up"
 VAT_bound_max = Vector3(13.8, 15.6, 11.95)

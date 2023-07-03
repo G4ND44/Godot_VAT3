@@ -14,7 +14,7 @@ void vertex()
 
 	vertInputs.texCoord0 =vec2(UV.x, UV.y);
 
-	Vat3_NonTexInputs nonTexInputs = GetVat3DefualtInputs(vertInputs);
+	Vat3_NonTexInputs nonTexInputs = GetVat3Inputs(vertInputs);
 	Vat3_Outputs vatOutputs = ApplyVAT3_Deformation(vertInputs,nonTexInputs);
 	//nonTexInputs.boundMax = vec3( 6.070000171661377, 3.299999952316284, 5.550000190734863);
 	//	nonTexInputs.boundMin = vec3(  -9.100000381469727,  -7.330000400543213, -6.300000190734863);

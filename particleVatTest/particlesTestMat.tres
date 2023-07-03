@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://coxi0nbsn5s2f"]
 
-[ext_resource type="Script" path="res://scripts/vatSetUniforms.gd" id="1_cjlv7"]
+[ext_resource type="Script" path="res://VAT3_GodotEngine/scripts/vatSetUniforms.gd" id="1_cjlv7"]
 [ext_resource type="Shader" path="res://particleVatTest/particlesTest.gdshader" id="1_l777p"]
 [ext_resource type="Texture2D" uid="uid://b65lddlb81pam" path="res://particleVatTest/particlesTestNormalMap.png" id="2_4iqde"]
 [ext_resource type="Texture2D" uid="uid://dba4quasumhof" path="res://particleVatTest/tex/particles_simulation_col.exr" id="2_ced61"]

@@ -133,7 +133,7 @@ struct Vat3_Vertex_Input {
 	#if defined(VAT3MODE_PARTICLES)
 	float VatRandomFloat(vec2 seed)
 	{
-		return fract(sin(dot(seed, vec2(12.9898, 78.233)))*43758.5453);
+		return fract(sin(dot(seed, vec2(22.9898, 178.24313)))*12858.24161);
 	}
 	#endif
 #endif /*VAT3_STRUCTS*/
