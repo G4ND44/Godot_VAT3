@@ -1,0 +1,45 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://wdep7rupvocc"
+path="res://.godot/imported/Cloth_simumlation_mesh_100F.gltf-00ad076abedc6970defe13da7a896cf2.scn"
+
+[deps]
+
+source_file="res://clothVatTest/geo/Cloth_simumlation_mesh_100F.gltf"
+dest_files=["res://.godot/imported/Cloth_simumlation_mesh_100F.gltf-00ad076abedc6970defe13da7a896cf2.scn"]
+
+[params]
+
+nodes/root_type="Node3D"
+nodes/root_name="Scene Root"
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+meshes/ensure_tangents=false
+meshes/generate_lods=false
+meshes/create_shadow_meshes=false
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+import_script/path=""
+_subresources={
+"meshes": {
+"Cloth_simumlation_mesh_100F_mesh": {
+"generate/lightmap_uv": 2,
+"generate/lods": 2,
+"generate/shadow_meshes": 2,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": false,
+"save_to_file/make_streamable": "",
+"save_to_file/path": ""
+}
+}
+}
+gltf/embedded_image_handling=1

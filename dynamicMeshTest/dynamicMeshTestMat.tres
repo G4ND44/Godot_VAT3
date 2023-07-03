@@ -10,8 +10,8 @@
 render_priority = 0
 shader = ExtResource("1_ta852")
 shader_parameter/_isTexHdr = true
-shader_parameter/_boundMax = Vector3(6.07, 3.3, 5.55)
-shader_parameter/_boundMin = Vector3(-9.1, -7.33, -6.3)
+shader_parameter/_boundMax = Vector3(8, -3.2, 5.05)
+shader_parameter/_boundMin = Vector3(-8, -14.106, -5)
 shader_parameter/_houdiniFPS = 24.0
 shader_parameter/_uvFromRG = null
 shader_parameter/_frameCount = 100.0

@@ -4,11 +4,12 @@ shader_type spatial;
 //#define NO_VAT_TANGENT
 #define VAT3MODE_RIGIDBODY
 #define VAT_SMOOTH_TRAJECTORIES
+//#define VAT_OUTPUT_FULL
 
 
 
 	
-#include "res://VAT3_GodotEngine/VAT3_handler.gdshaderinc"
+#include "res://VAT3_GodotEngine/VAT3_Wraper.gdshaderinc"
 
 void vertex()
 {
@@ -29,7 +30,7 @@ void vertex()
 	NORMAL = vatOutputs.outNormal.xyz;
 	TANGENT = vatOutputs.outTangent;
 
-	UV = clamp(	vertInputs.texCoord3.xy,vec2(0.0,0.0),vec2(1.0, 1.0));
+	//UV = clamp(	vertInputs.texCoord3.xy,vec2(0.0,0.0),vec2(1.0, 1.0));
 	//COLOR = vatOutputs.outColorAndAlpha.xyz;
 }
 

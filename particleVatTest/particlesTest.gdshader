@@ -3,16 +3,18 @@ render_mode  cull_back;
 //render_mode unshaded;
 //#define NO_VAT_NORMAL
 //#define NO_VAT_TANGENT
+
 #define VAT3MODE_PARTICLES
 #define VAT_LOAD_COL_TEX
 #define VAT_CAN_SPIN
+#define VAT_OUTPUT_FULL
 uniform sampler2D normalmap : hint_normal;
 
 
 
 
 	
-#include "res://VAT3_GodotEngine/VAT3_handler.gdshaderinc"
+#include "res://VAT3_GodotEngine/VAT3_Wraper.gdshaderinc"
 
 void vertex()
 {

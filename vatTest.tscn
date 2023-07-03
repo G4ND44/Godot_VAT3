@@ -1,12 +1,12 @@
 [gd_scene load_steps=14 format=3 uid="uid://bcdi16oic7e5t"]
 
-[ext_resource type="PackedScene" uid="uid://bctk3l4art436" path="res://clothVatTest/geo/Cloth_simumlation_mesh_mesh_100F.gltf" id="1_skux8"]
 [ext_resource type="PackedScene" uid="uid://dhdgtg3oqv5dd" path="res://rigidVatTest/geo/rigid_body_simulation_mesh_100F.gltf" id="2_0alca"]
-[ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/softBodyTestMat.tres" id="2_78af2"]
 [ext_resource type="Material" uid="uid://xha7o7u1vl2h" path="res://rigidVatTest/rigidBodyTestMat.tres" id="3_hpjqd"]
 [ext_resource type="Script" path="res://scripts/vatSetUniforms.gd" id="3_k5hr2"]
+[ext_resource type="Material" uid="uid://dao6jbdg5yog" path="res://dynamicMeshTest/dynamicMeshTestMat.tres" id="4_rxvjw"]
 [ext_resource type="PackedScene" uid="uid://dpyfq0d4apmfb" path="res://dynamicMeshTest/geo/fluidSimulation_mesh_100F.gltf" id="6_panr7"]
-[ext_resource type="Material" uid="uid://dao6jbdg5yog" path="res://dynamicMeshTest/dynamicMeshTestMat.tres" id="7_88glp"]
+[ext_resource type="PackedScene" uid="uid://wdep7rupvocc" path="res://clothVatTest/geo/Cloth_simumlation_mesh_100F.gltf" id="8_hcw6b"]
+[ext_resource type="Material" uid="uid://3j5jhme8wnn" path="res://clothVatTest/softBodyTestMat.tres" id="9_hebor"]
 [ext_resource type="PackedScene" uid="uid://ciobim5ryayjk" path="res://particleVatTest/geo/particles_simulation_mesh_100F.gltf" id="10_erqmm"]
 [ext_resource type="Material" uid="uid://coxi0nbsn5s2f" path="res://particleVatTest/particlesTestMat.tres" id="11_oln0i"]
 
@@ -34,21 +34,6 @@ current = true
 transform = Transform3D(1, 0, 0, 0, 0.827591, 0.561332, 0, -0.561332, 0.827591, 11.2536, 10.1913, -44.9549)
 shadow_enabled = true
 
-[node name="Cloth_simumlation_mesh_mesh_100F" parent="." instance=ExtResource("1_skux8")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.9401, 0, -72.1084)
-
-[node name="Mesh2" parent="Cloth_simumlation_mesh_mesh_100F" index="0"]
-transform = Transform3D(0.998987, 0, 0, 0, 0.998987, 0, 0, 0, 0.998987, 0, 0, 0)
-material_override = ExtResource("2_78af2")
-script = ExtResource("3_k5hr2")
-JSON_PATH = "res://clothVatTest/data/Cloth_simumlation_mesh_data.json"
-VAT_axis_system = "Right-Handed Y-Up"
-VAT_bound_max = Vector3(8, -3.2, 5.05)
-VAT_bound_min = Vector3(-8, -14.106, -5)
-VAT_houdini_fps = 24.0
-VAT_name = "VAT"
-vat_material = ExtResource("2_78af2")
-
 [node name="rigid_body_simulation_mesh_100F" parent="." instance=ExtResource("2_0alca")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 142.801, -2.38419e-07, -84.7305)
 
@@ -61,17 +46,32 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.7257, 0, -85.4753)
 
 [node name="Mesh2" parent="fluidSimulation_mesh_100F" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.98587, 6.27979, -3.82005)
-surface_material_override/0 = ExtResource("7_88glp")
+surface_material_override/0 = ExtResource("4_rxvjw")
 script = ExtResource("3_k5hr2")
 
 [node name="particles_simulation_mesh_100F" parent="." instance=ExtResource("10_erqmm")]
 transform = Transform3D(-0.987884, 0.155193, 0, -0.0524933, -0.334147, 0.941058, 0.146046, 0.929656, 0.338245, 14.4815, 0, -90.0996)
 
 [node name="Mesh2" parent="particles_simulation_mesh_100F" index="0"]
+transform = Transform3D(0.974, -1.19209e-07, 3.72529e-08, 1.04308e-07, 0.966, 2.98023e-07, -3.35276e-08, -4.76837e-07, 1, -21.2467, -1.46626, -1.93872)
 surface_material_override/0 = ExtResource("11_oln0i")
 script = ExtResource("3_k5hr2")
+JSON_PATH = "res://particleVatTest/data/particles_simulation_data.json"
+VAT_axis_system = "Right-Handed Y-Up"
+VAT_bound_max = Vector3(13.8, 15.6, 11.95)
+VAT_bound_min = Vector3(-14.5, -15.705, -11.5)
+VAT_houdini_fps = 24.0
+VAT_name = "VAT"
+vat_material = ExtResource("11_oln0i")
 
-[editable path="Cloth_simumlation_mesh_mesh_100F"]
+[node name="Cloth_simumlation_mesh_100F" parent="." instance=ExtResource("8_hcw6b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.3958, 0, -39.8637)
+
+[node name="Mesh2" parent="Cloth_simumlation_mesh_100F" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30.2691)
+surface_material_override/0 = ExtResource("9_hebor")
+
 [editable path="rigid_body_simulation_mesh_100F"]
 [editable path="fluidSimulation_mesh_100F"]
 [editable path="particles_simulation_mesh_100F"]
+[editable path="Cloth_simumlation_mesh_100F"]

@@ -4,7 +4,7 @@ shader_type spatial;
 #define VAT3MODE_DYNAMICMESH
 #define VAT_LOAD_COL_TEX
 
-#include "res://VAT3_GodotEngine/VAT3_handler.gdshaderinc"
+#include "res://VAT3_GodotEngine/VAT3_Wraper.gdshaderinc"
 
 void vertex()
 {

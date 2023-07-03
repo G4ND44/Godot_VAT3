@@ -71,23 +71,35 @@ struct Vat3_Outputs {
     #endif
     #if defined(VAT_OUTPUT_FULL)
         float samplingVThisFrame;
-        float samplingVNextFrame;
+		#ifndef NO_LERPING
+        	float samplingVNextFrame;
+		#endif
         float dataInPositionAlphaThisFrame;
-        float dataInPositionAlphaNextFrame;
+		#ifndef NO_LERPING
+        	float dataInPositionAlphaNextFrame;
+		#endif
         #if defined(VAT_LOAD_COL_TEX)
             vec4 outColorRgbaThisFrame;
-            vec4 outColorRgbaNextFrame;
+			#ifndef NO_LERPING
+            	vec4 outColorRgbaNextFrame;
+			#endif
         #endif
         #if defined(VAT_LOAD_SPARE_COL_TEX)
             vec4 outSpareColorRGBAThisFrame;
-            vec4 outSpareColorRGBANextFrame;
+			#ifndef NO_LERPING
+            	vec4 outSpareColorRGBANextFrame;
+			#endif
         #endif
-
-        float outInterframeInterpolationAlpha;
+		#ifndef NO_LERPING
+        	float outInterframeInterpolationAlpha;
+		    float outAnimationProgressNextFrame;
+		#endif
         float outAnimationProgressThisFrame;
-        float outAnimationProgressNextFrame;
+    
         vec3 outPointLocalPositionThisFrame;
-        vec3 outPointLocalPositionNextFrame;
+		#ifndef NO_LERPING
+	        vec3 outPointLocalPositionNextFrame;
+		#endif
         #if defined(VAT3MODE_RIGIDBODY)
             vec3 outPieceLocalPositionFinal;
             vec3 outPieceRestFrameLocalPosition;
