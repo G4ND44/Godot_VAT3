@@ -1,8 +1,9 @@
 # Godot VAT3
 
-Godot Plugin for Houdini Vertex Animation Textures
-
 ![vatPreview](https://github.com/G4ND44/Godot_VAT3/assets/30861241/5de1ab79-0c87-4733-b7e6-709cd4738f7f)
+
+__Godot Plugin for Houdini Vertex Animation Textures__
+
 
 This is port of Houdini VAT3 for Godot, based on Unity And Unreal versions.
 
