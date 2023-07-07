@@ -64,4 +64,5 @@ func load_vat(_JSON_PATH: String):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	load_vat(JSON_PATH)
+	if Engine.is_editor_hint():
+		load_vat(JSON_PATH)
